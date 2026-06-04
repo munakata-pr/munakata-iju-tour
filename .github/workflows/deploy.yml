@@ -40,6 +40,24 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Install Translate Shell
+        run: |
+          sudo apt-get update && sudo apt-get install -y translate-shell
+
+      - name: Translate Commit Message
+        id: translate
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          # 英語のコミットメッセージを日本語に自動翻訳（失敗した場合は原文ママ）
+          TRANSLATED_MSG=$(trans -brief :ja "$COMMIT_MSG" 2>/dev/null || echo "$COMMIT_MSG")
+          
+          # 特殊文字のエスケープとトリム
+          CLEAN_MSG=$(echo "$TRANSLATED_MSG" | tr -d '"' | tr -d "'" | head -n 3)
+          
+          echo "TRANSLATED_MSG<<EOF" >> $GITHUB_ENV
+          echo "$CLEAN_MSG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Generate Slack Notification Payload
         id: slack-payload
         run: |
@@ -101,8 +119,8 @@ jobs:
           # GitHubコミットURL
           COMMIT_URL="https://github.com/munakata-pr/munakata-iju-tour/commit/${{ github.sha }}"
           
-          # メッセージ本文を構築
-          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容（何をしたか）:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
+          # メッセージ本文を構築（翻訳された日本語のメッセージを使用）
+          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容（何をしたか）:* ${{ env.TRANSLATED_MSG }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
           
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
