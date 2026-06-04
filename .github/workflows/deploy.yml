@@ -46,19 +46,21 @@ jobs:
           # 1. 変更ファイル一覧を取得
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
             FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-            DIFF_TEXT=$(git diff-tree -p -U0 ${{ github.sha }})
           else
             FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-            DIFF_TEXT=$(git diff -p -U0 ${{ github.event.before }} ${{ github.event.after }} || git diff-tree -p -U0 ${{ github.sha }})
           fi
           
           # 箇条書きフォーマット（日本語の役割説明付き）
           FORMATTED_FILES=""
+          HAS_HTML_CHANGE=false
           while IFS= read -r file; do
             if [ -n "$file" ]; then
               desc=""
               case "$file" in
-                *index.html) desc=" 🏠（サイトの全体ページ）" ;;
+                *index.html)
+                  desc=" 🏠（サイトの全体ページ）"
+                  HAS_HTML_CHANGE=true
+                  ;;
                 *style.css) desc=" 🎨（画面のデザイン・色合い）" ;;
                 *app.js) desc=" ⚙️（申し込みボタンなどの動き・機能）" ;;
                 *.github/workflows/deploy.yml) desc=" 🤖（自動公開とSlack通知の設定）" ;;
@@ -69,23 +71,38 @@ jobs:
             fi
           done <<< "$FILES"
           
-          # 変更されたテキストをクリーンに抽出（HTMLタグやコード用記号を排除）
-          PREV_TEXT=$(echo "$DIFF_TEXT" | grep -E "^-[^-]" | sed 's/^-//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | sed -E 's/[{};()=]//g' | grep -E -v '^[[:space:]]*$' | head -n 5)
-          NEXT_TEXT=$(echo "$DIFF_TEXT" | grep -E "^\+[^+]" | sed 's/^+//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | sed -E 's/[{};()=]//g' | grep -E -v '^[[:space:]]*$' | head -n 5)
-          
+          # 2. 変更テキストプレビューの生成
           DIFF_PREVIEW=""
-          if [ -n "$PREV_TEXT" ]; then
-            DIFF_PREVIEW="${DIFF_PREVIEW}*【変更前】*\n\`\`\`\n${PREV_TEXT}\n\`\`\`\n"
+          if [ "$HAS_HTML_CHANGE" = true ]; then
+            # index.html のみの差分を取得
+            if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
+              HTML_DIFF=$(git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
+            else
+              HTML_DIFF=$(git diff -p -U0 ${{ github.event.before }} ${{ github.event.after }} -- index.html || git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
+            fi
+            
+            # クリーンなテキストのみを抽出
+            PREV_TEXT=$(echo "$HTML_DIFF" | grep -E "^-[^-]" | sed 's/^-//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' | head -n 8)
+            NEXT_TEXT=$(echo "$HTML_DIFF" | grep -E "^\+[^+]" | sed 's/^+//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' | head -n 8)
+            
+            if [ -n "$PREV_TEXT" ]; then
+              DIFF_PREVIEW="${DIFF_PREVIEW}*【変更前の言葉】*\n\`\`\`\n${PREV_TEXT}\n\`\`\`\n"
+            fi
+            if [ -n "$NEXT_TEXT" ]; then
+              DIFF_PREVIEW="${DIFF_PREVIEW}*【変更後の言葉】*\n\`\`\`\n${NEXT_TEXT}\n\`\`\`\n"
+            fi
           fi
-          if [ -n "$NEXT_TEXT" ]; then
-            DIFF_PREVIEW="${DIFF_PREVIEW}*【変更後】*\n\`\`\`\n${NEXT_TEXT}\n\`\`\`\n"
+          
+          # HTML以外の変更の場合の案内
+          if [ -z "$DIFF_PREVIEW" ]; then
+            DIFF_PREVIEW="*（今回はサイト内の「言葉（テキスト）」の修正はありません。画面のデザインや裏側の仕組みの調整です。）*"
           fi
           
           # GitHubコミットURL
           COMMIT_URL="https://github.com/munakata-pr/munakata-iju-tour/commit/${{ github.sha }}"
           
           # メッセージ本文を構築
-          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
+          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容（何をしたか）:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
           
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
