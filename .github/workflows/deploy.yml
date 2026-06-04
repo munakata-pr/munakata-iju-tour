@@ -94,9 +94,11 @@ jobs:
             fi
           fi
           
-          # HTML以外の変更の場合の案内
+          # HTML内の言葉の修正がない場合は、送信不要として出力をセットして終了する
           if [ -z "$DIFF_PREVIEW" ]; then
-            DIFF_PREVIEW="（今回はサイト内の「言葉（テキスト）」の修正はありません。画面のデザインや裏側の仕組みの調整です。）"
+            echo "HTML内の言葉の修正がないため、Slack通知をスキップします。"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
           
           # メッセージ本文を構築
@@ -104,9 +106,10 @@ jobs:
           
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
+          echo "should_notify=true" >> $GITHUB_OUTPUT
 
       - name: Slack Notification on Success
-        if: success()
+        if: success() && steps.slack-payload.outputs.should_notify == 'true'
         run: |
           curl -X POST -H 'Content-type: application/json' -d @/tmp/slack_payload.json ${{ secrets.SLACK_WEBHOOK_URL }}
 
