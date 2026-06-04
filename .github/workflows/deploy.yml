@@ -40,17 +40,19 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Get changed files
-        id: files
+      - name: Generate Slack Notification Payload
+        id: slack-payload
         run: |
-          # 変更されたファイルの一覧を取得
+          # 1. 変更ファイル一覧を取得
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
             FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+            DIFF_TEXT=$(git diff-tree -p ${{ github.sha }} | head -n 40)
           else
             FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+            DIFF_TEXT=$(git diff -p ${{ github.event.before }} ${{ github.event.after }} | head -n 40 || git diff-tree -p ${{ github.sha }} | head -n 40)
           fi
           
-          # Slack配信用にフォーマット
+          # 箇条書きフォーマット
           FORMATTED_FILES=""
           while IFS= read -r file; do
             if [ -n "$file" ]; then
@@ -58,20 +60,19 @@ jobs:
             fi
           done <<< "$FILES"
           
-          # 環境変数に出力
-          echo "FILES_LIST<<EOF" >> $GITHUB_ENV
-          echo -e "$FORMATTED_FILES" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          # GitHubコミットURL
+          COMMIT_URL="https://github.com/munakata-pr/munakata-iju-tour/commit/${{ github.sha }}"
+          
+          # メッセージ本文を構築
+          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*具体的な変更内容（抜粋）:*\n\`\`\`diff\n${DIFF_TEXT}\n\`\`\`"
+          
+          # jqを使って安全にJSONを作成
+          jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
 
       - name: Slack Notification on Success
         if: success()
         run: |
-          # 改行を含んだ環境変数を安全にJSONエスケープ
-          ESCAPED_FILES=$(echo "${{ env.FILES_LIST }}" | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
-          
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\": \"🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\\n\\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\\n*更新内容:* ${{ github.event.head_commit.message }}\\n\\n*修正されたファイル:*\\n${ESCAPED_FILES}\"}" \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' -d @/tmp/slack_payload.json ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Slack Notification on Failure
         if: failure()
