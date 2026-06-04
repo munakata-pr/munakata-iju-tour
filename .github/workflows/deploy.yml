@@ -61,31 +61,46 @@ jobs:
       - name: Generate Slack Notification Payload
         id: slack-payload
         run: |
-          # ユーザー指定の通知テキストを一時的にハードコードして送信する
-          # 改行や引用符を正確に含めるため、YAMLインデント付きで変数に定義します。
-          RAW_MSG="【デプロイ完了】移住体験バスツアー特設サイトが更新されました！
-          公開URL: https://munakata-pr.github.io/munakata-iju-tour
+          # 1. 変更ファイル一覧を取得
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
+            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+          else
+            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+          fi
           
-          変更箇所は下記です。
+          HAS_HTML_CHANGE=false
+          while IFS= read -r file; do
+            if [ -n "$file" ] && [[ "$file" == *index.html ]]; then
+              HAS_HTML_CHANGE=true
+            fi
+          done <<< "$FILES"
           
-          【変更前の言葉】
+          # 2. 変更テキストプレビューの生成
+          DIFF_PREVIEW=""
+          if [ "$HAS_HTML_CHANGE" = true ]; then
+            # index.html のみの差分を取得
+            if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
+              HTML_DIFF=$(git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
+            else
+              HTML_DIFF=$(git diff -p -U0 ${{ github.event.before }} ${{ github.event.after }} -- index.html || git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
+            fi
+            
+            # クリーンなテキストのみを抽出
+            PREV_TEXT=$(echo "$HTML_DIFF" | grep -E "^-[^-]" | sed 's/^-//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' || true)
+            NEXT_TEXT=$(echo "$HTML_DIFF" | grep -E "^\+[^+]" | sed 's/^+//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' || true)
+            
+            if [ -n "$PREV_TEXT" ] || [ -n "$NEXT_TEXT" ]; then
+              DIFF_PREVIEW="変更箇所は下記です。"$'\n\n'"【変更前の言葉】"$'\n\n'"${PREV_TEXT}"$'\n\n'"【変更後の言葉】"$'\n\n'"${NEXT_TEXT}"
+            fi
+          fi
           
-          （プレファミリー層、子育て世帯等）
-          \"第1回 プレファミリー・子育て世帯向け体験ツアー\"
-          【第1回】プレファミリー・
-          将来的な子育てを見据えるプレファミリーや若手ファミリーを対象に、
-          プレファミリー・子育て世帯向け体感ツアー
+          # HTML以外の変更の場合の案内
+          if [ -z "$DIFF_PREVIEW" ]; then
+            DIFF_PREVIEW="（今回はサイト内の「言葉（テキスト）」の修正はありません。画面のデザインや裏側の仕組みの調整です。）"
+          fi
           
-          【変更後の言葉】
-          
-          （これから家族が増えるご家庭、子育て世帯等）
-          \"第1回 新婚ご夫婦・子育て世帯向け体験ツアー\"
-          【第1回】新婚ご夫婦・
-          将来的に子育てを考えている新婚ご夫婦や若いファミリーを対象に、
-          新婚ご夫婦・子育て世帯向け体感ツアー"
-          
-          # 各行の先頭にある10個のスペース（YAMLインデントによるもの）を削除
-          MSG_TEXT=$(echo "$RAW_MSG" | sed 's/^[[:space:]]\{10\}//')
+          # メッセージ本文を構築
+          MSG_TEXT="【デプロイ完了】移住体験バスツアー特設サイトが更新されました！"$'\n'"公開URL: https://munakata-pr.github.io/munakata-iju-tour"$'\n\n'"${DIFF_PREVIEW}"
           
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
