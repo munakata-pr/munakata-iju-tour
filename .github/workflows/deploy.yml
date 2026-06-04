@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages and Notify Slack
+
+on:
+  push:
+    branches:
+      - main
+
+# GitHub Pages のデプロイに必要なパーミッション設定
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 実行中のジョブの重複を防ぐ
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Slack Notification on Success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text": "🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Slack Notification on Failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text": "🚨 *【デプロイ失敗】移住体験バスツアー特設サイトのデプロイに失敗しました。*\n詳細はGitHub Actionsのログを確認してください。"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
