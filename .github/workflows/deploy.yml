@@ -61,67 +61,31 @@ jobs:
       - name: Generate Slack Notification Payload
         id: slack-payload
         run: |
-          # 1. 変更ファイル一覧を取得
-          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
-            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-          else
-            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-          fi
-          
-          # 箇条書きフォーマット（日本語の役割説明付き）
-          FORMATTED_FILES=""
-          HAS_HTML_CHANGE=false
-          while IFS= read -r file; do
-            if [ -n "$file" ]; then
-              desc=""
-              case "$file" in
-                *index.html)
-                  desc=" 🏠（サイトの全体ページ）"
-                  HAS_HTML_CHANGE=true
-                  ;;
-                *style.css) desc=" 🎨（画面のデザイン・色合い）" ;;
-                *app.js) desc=" ⚙️（申し込みボタンなどの動き・機能）" ;;
-                *.github/workflows/deploy.yml) desc=" 🤖（自動公開とSlack通知の設定）" ;;
-                *README.md) desc=" 📝（開発用の説明書）" ;;
-                *assets/*) desc=" 🖼️（画像や写真、イラスト）" ;;
-              esac
-              FORMATTED_FILES="${FORMATTED_FILES}\n• ${file}${desc}"
-            fi
-          done <<< "$FILES"
-          
-          # 2. 変更テキストプレビューの生成
-          DIFF_PREVIEW=""
-          if [ "$HAS_HTML_CHANGE" = true ]; then
-            # index.html のみの差分を取得
-            if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
-              HTML_DIFF=$(git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
-            else
-              HTML_DIFF=$(git diff -p -U0 ${{ github.event.before }} ${{ github.event.after }} -- index.html || git diff-tree -p -U0 ${{ github.sha }} -- index.html || true)
-            fi
-            
-            # クリーンなテキストのみを抽出
-            PREV_TEXT=$(echo "$HTML_DIFF" | grep -E "^-[^-]" | sed 's/^-//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' | head -n 8)
-            NEXT_TEXT=$(echo "$HTML_DIFF" | grep -E "^\+[^+]" | sed 's/^+//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | grep -E -v '^[[:space:]]*$' | head -n 8)
-            
-            if [ -n "$PREV_TEXT" ]; then
-              DIFF_PREVIEW="${DIFF_PREVIEW}*【変更前の言葉】*\n\`\`\`\n${PREV_TEXT}\n\`\`\`\n"
-            fi
-            if [ -n "$NEXT_TEXT" ]; then
-              DIFF_PREVIEW="${DIFF_PREVIEW}*【変更後の言葉】*\n\`\`\`\n${NEXT_TEXT}\n\`\`\`\n"
-            fi
-          fi
-          
-          # HTML以外の変更の場合の案内
-          if [ -z "$DIFF_PREVIEW" ]; then
-            DIFF_PREVIEW="*（今回はサイト内の「言葉（テキスト）」の修正はありません。画面のデザインや裏側の仕組みの調整です。）*"
-          fi
-          
-          # GitHubコミットURL
-          COMMIT_URL="https://github.com/munakata-pr/munakata-iju-tour/commit/${{ github.sha }}"
-          
-          # メッセージ本文を構築（翻訳された日本語のメッセージを使用）
-          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容（何をしたか）:* ${{ env.TRANSLATED_MSG }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
-          
+          # ユーザー指定の通知テキストを一時的にハードコードして送信する
+          # 改行や引用符を正確に含めるため、ヒアドキュメントを使用します。
+          read -r -d '' MSG_TEXT << 'EOF' || true
+【デプロイ完了】移住体験バスツアー特設サイトが更新されました！
+公開URL: https://munakata-pr.github.io/munakata-iju-tour
+
+変更箇所は下記です。
+
+【変更前の言葉】
+
+（プレファミリー層、子育て世帯等）
+"第1回 プレファミリー・子育て世帯向け体験ツアー"
+【第1回】プレファミリー・
+将来的な子育てを見据えるプレファミリーや若手ファミリーを対象に、
+プレファミリー・子育て世帯向け体感ツアー
+
+【変更後の言葉】
+
+（これから家族が増えるご家庭、子育て世帯等）
+"第1回 新婚ご夫婦・子育て世帯向け体験ツアー"
+【第1回】新婚ご夫婦・
+将来的に子育てを考えている新婚ご夫婦や若いファミリーを対象に、
+新婚ご夫婦・子育て世帯向け体感ツアー
+EOF
+
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
 
