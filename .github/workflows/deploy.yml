@@ -46,25 +46,46 @@ jobs:
           # 1. 変更ファイル一覧を取得
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
             FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-            DIFF_TEXT=$(git diff-tree -p ${{ github.sha }} | head -n 40)
+            DIFF_TEXT=$(git diff-tree -p -U0 ${{ github.sha }})
           else
             FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-            DIFF_TEXT=$(git diff -p ${{ github.event.before }} ${{ github.event.after }} | head -n 40 || git diff-tree -p ${{ github.sha }} | head -n 40)
+            DIFF_TEXT=$(git diff -p -U0 ${{ github.event.before }} ${{ github.event.after }} || git diff-tree -p -U0 ${{ github.sha }})
           fi
           
-          # 箇条書きフォーマット
+          # 箇条書きフォーマット（日本語の役割説明付き）
           FORMATTED_FILES=""
           while IFS= read -r file; do
             if [ -n "$file" ]; then
-              FORMATTED_FILES="${FORMATTED_FILES}\n• ${file}"
+              desc=""
+              case "$file" in
+                *index.html) desc=" 🏠（サイトの全体ページ）" ;;
+                *style.css) desc=" 🎨（画面のデザイン・色合い）" ;;
+                *app.js) desc=" ⚙️（申し込みボタンなどの動き・機能）" ;;
+                *.github/workflows/deploy.yml) desc=" 🤖（自動公開とSlack通知の設定）" ;;
+                *README.md) desc=" 📝（開発用の説明書）" ;;
+                *assets/*) desc=" 🖼️（画像や写真、イラスト）" ;;
+              esac
+              FORMATTED_FILES="${FORMATTED_FILES}\n• ${file}${desc}"
             fi
           done <<< "$FILES"
+          
+          # 変更されたテキストをクリーンに抽出（HTMLタグやコード用記号を排除）
+          PREV_TEXT=$(echo "$DIFF_TEXT" | grep -E "^-[^-]" | sed 's/^-//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | sed -E 's/[{};()=]//g' | grep -E -v '^[[:space:]]*$' | head -n 5)
+          NEXT_TEXT=$(echo "$DIFF_TEXT" | grep -E "^\+[^+]" | sed 's/^+//' | sed -E 's/<[^>]*>//g' | sed -E 's/^[[:space:]]*//' | sed -E 's/[{};()=]//g' | grep -E -v '^[[:space:]]*$' | head -n 5)
+          
+          DIFF_PREVIEW=""
+          if [ -n "$PREV_TEXT" ]; then
+            DIFF_PREVIEW="${DIFF_PREVIEW}*【変更前】*\n\`\`\`\n${PREV_TEXT}\n\`\`\`\n"
+          fi
+          if [ -n "$NEXT_TEXT" ]; then
+            DIFF_PREVIEW="${DIFF_PREVIEW}*【変更後】*\n\`\`\`\n${NEXT_TEXT}\n\`\`\`\n"
+          fi
           
           # GitHubコミットURL
           COMMIT_URL="https://github.com/munakata-pr/munakata-iju-tour/commit/${{ github.sha }}"
           
           # メッセージ本文を構築
-          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*具体的な変更内容（抜粋）:*\n\`\`\`diff\n${DIFF_TEXT}\n\`\`\`"
+          MSG_TEXT="🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}\n*詳細（GitHubで差分を確認）:* <${COMMIT_URL}|こちらをクリック>\n\n*修正されたファイル:*${FORMATTED_FILES}\n\n*変更されたテキスト・言葉（抜粋）:*\n${DIFF_PREVIEW}"
           
           # jqを使って安全にJSONを作成
           jq -n --arg msg "$MSG_TEXT" '{"text": $msg}' > /tmp/slack_payload.json
