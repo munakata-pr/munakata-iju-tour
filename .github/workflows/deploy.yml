@@ -38,11 +38,37 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Get changed files
+        id: files
+        run: |
+          # 変更されたファイルの一覧を取得
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
+            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+          else
+            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+          fi
+          
+          # Slack配信用にフォーマット
+          FORMATTED_FILES=""
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              FORMATTED_FILES="${FORMATTED_FILES}\n• ${file}"
+            fi
+          done <<< "$FILES"
+          
+          # 環境変数に出力
+          echo "FILES_LIST<<EOF" >> $GITHUB_ENV
+          echo -e "$FORMATTED_FILES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Slack Notification on Success
         if: success()
         run: |
+          # 改行を含んだ環境変数を安全にJSONエスケープ
+          ESCAPED_FILES=$(echo "${{ env.FILES_LIST }}" | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
+          
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text": "🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\n\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\n*更新内容:* ${{ github.event.head_commit.message }}"}' \
+          --data "{\"text\": \"🎉 *【デプロイ完了】移住体験バスツアー特設サイトが更新されました！*\\n\\n*公開URL:* https://munakata-pr.github.io/munakata-iju-tour/\\n*更新内容:* ${{ github.event.head_commit.message }}\\n\\n*修正されたファイル:*\\n${ESCAPED_FILES}\"}" \
           ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Slack Notification on Failure
