@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -45,7 +47,7 @@ jobs:
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] || [ -z "${{ github.event.before }}" ]; then
             FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
           else
-            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
           fi
           
           # Slack配信用にフォーマット
