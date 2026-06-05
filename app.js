@@ -146,26 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       // Validate Agreements
-      const coolerAgree = document.getElementById('cooler_agree');
       const lunchAgree = document.getElementById('lunch_agree');
       const privacyAgree = document.getElementById('privacy_agree');
       
-      if (!coolerAgree.checked) {
-        showError(coolerAgree, '生鮮食品用のクーラーボックス持参ルールへの同意が必要です。');
-        isValid = false;
-      } else {
-        clearError(coolerAgree);
-      }
-      
       if (!lunchAgree.checked) {
-        showError(lunchAgree, '昼食代（自己負担分）への同意が必要です。');
+        showError(lunchAgree, '飲食費が自己負担であることへの同意が必要です。');
         isValid = false;
       } else {
         clearError(lunchAgree);
       }
 
       if (!privacyAgree.checked) {
-        showError(privacyAgree, '個人情報の取扱方針への同意が必要です。');
+        showError(privacyAgree, '個人情報の取扱方針および保険の適用への同意が必要です。');
         isValid = false;
       } else {
         clearError(privacyAgree);
