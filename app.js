@@ -73,6 +73,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('bookingForm');
   const modal = document.getElementById('successModal');
   const modalClose = document.getElementById('modalCloseBtn');
+  const participantsSelect = document.getElementById('participants');
+  const companionWrapper = document.getElementById('companion_info_wrapper');
+
+  // Toggle Companion Info wrapper based on number of participants
+  if (participantsSelect && companionWrapper) {
+    participantsSelect.addEventListener('change', () => {
+      if (participantsSelect.value === '2') {
+        companionWrapper.style.display = 'block';
+      } else {
+        companionWrapper.style.display = 'none';
+        // Clear companion inputs when switching back to 1 participant
+        const companionName = document.getElementById('companion_name');
+        const companionAge = document.getElementById('companion_age');
+        const companionRel = document.getElementById('companion_relationship');
+        if (companionName) {
+          companionName.value = '';
+          clearError(companionName);
+        }
+        if (companionAge) {
+          companionAge.value = '';
+          clearError(companionAge);
+        }
+        if (companionRel) {
+          companionRel.value = '';
+          clearError(companionRel);
+        }
+      }
+    });
+  }
   
   if (form) {
     form.addEventListener('submit', (e) => {
@@ -136,6 +165,39 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(addressInput);
       }
       
+      // Validate Companion Info (Only when 2 participants are selected)
+      const companionNameInput = document.getElementById('companion_name');
+      const companionAgeInput = document.getElementById('companion_age');
+      const companionRelSelect = document.getElementById('companion_relationship');
+
+      if (participantsSelect && participantsSelect.value === '2') {
+        if (companionNameInput && companionNameInput.value.trim() === '') {
+          showError(companionNameInput, '同行者様のお名前を入力してください。');
+          isValid = false;
+        } else if (companionNameInput) {
+          clearError(companionNameInput);
+        }
+
+        if (companionAgeInput) {
+          if (companionAgeInput.value.trim() === '') {
+            showError(companionAgeInput, '同行者様の年齢を入力してください。');
+            isValid = false;
+          } else if (isNaN(companionAgeInput.value) || parseInt(companionAgeInput.value) <= 0) {
+            showError(companionAgeInput, '正しい年齢を入力してください。');
+            isValid = false;
+          } else {
+            clearError(companionAgeInput);
+          }
+        }
+
+        if (companionRelSelect && companionRelSelect.value === '') {
+          showError(companionRelSelect, '代表者様との関係を選択してください。');
+          isValid = false;
+        } else if (companionRelSelect) {
+          clearError(companionRelSelect);
+        }
+      }
+      
       // Validate Course Selection
       const courseSelect = document.getElementById('tour_course');
       if (courseSelect.value === '') {
@@ -171,18 +233,30 @@ document.addEventListener('DOMContentLoaded', () => {
           email: emailInput.value.trim(),
           phone: phoneInput.value.trim(),
           address: addressInput.value.trim(),
-          participants: document.getElementById('participants').value,
+          participants: participantsSelect ? participantsSelect.value : '1',
           course: courseSelect.options[courseSelect.selectedIndex].text,
           inquiry: document.getElementById('inquiry').value.trim()
         };
+
+        // Add companion details if 2 participants are selected
+        if (formData.participants === '2' && companionNameInput && companionAgeInput && companionRelSelect) {
+          formData.companionName = companionNameInput.value.trim();
+          formData.companionAge = companionAgeInput.value.trim();
+          formData.companionRelationship = companionRelSelect.options[companionRelSelect.selectedIndex].text;
+        }
         
-        console.log('Application submitted successfully:', formData);
+        console.log('Application submitted successfully:', JSON.stringify(formData));
         
         // Show success modal
         modal.classList.add('active');
         
         // Reset form
         form.reset();
+
+        // Hide companion wrapper on reset
+        if (companionWrapper) {
+          companionWrapper.style.display = 'none';
+        }
       } else {
         // Scroll to the first error
         const firstError = document.querySelector('.has-error');

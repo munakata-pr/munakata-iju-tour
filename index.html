@@ -388,6 +388,38 @@
             </select>
           </div>
 
+          <!-- Companion Information (Hidden by default, shown only when 2 participants are selected) -->
+          <div id="companion_info_wrapper" class="form-group" style="display: none;">
+            <div style="border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 20px; background-color: var(--bg-light); margin-top: 16px;">
+              <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 1.6rem; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                <i class="fa-solid fa-user-plus"></i> 同行者様（2人目）の情報
+              </h4>
+              
+              <div class="form-group row-2">
+                <div>
+                  <label for="companion_name" class="form-label">同行者お名前（漢字）<span class="required">必須</span></label>
+                  <input type="text" id="companion_name" class="form-control" placeholder="山田 花子">
+                </div>
+                <div>
+                  <label for="companion_age" class="form-label">年齢（旅行保険申請に必要）<span class="required">必須</span></label>
+                  <input type="number" id="companion_age" class="form-control" placeholder="30" min="1" max="120">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="companion_relationship" class="form-label">代表者様との関係<span class="required">必須</span></label>
+                <select id="companion_relationship" class="form-control">
+                  <option value="" disabled selected>選択してください</option>
+                  <option value="spouse">配偶者・パートナー</option>
+                  <option value="child_under_school">子ども（未就学児）</option>
+                  <option value="child_over_school">子ども（小学生以上）</option>
+                  <option value="relative">その他親族</option>
+                  <option value="friend">友人・その他</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <!-- Inquiry -->
           <div class="form-group">
             <label for="inquiry" class="form-label">ご質問・ご要望・移住に関するご関心（任意）</label>

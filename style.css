@@ -845,12 +845,14 @@ textarea.form-control {
   font-weight: 700;
 }
 
-.form-group.has-error .form-control {
+.form-group.has-error .form-control,
+.has-error .form-control {
   border-color: var(--danger-color);
   background-color: #fff8f8;
 }
 
-.form-group.has-error .form-error-msg {
+.form-group.has-error .form-error-msg,
+.has-error .form-error-msg {
   display: block;
 }
 
