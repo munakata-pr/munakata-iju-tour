@@ -35,23 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Itinerary Accordion Logic
-  const timelineItems = document.querySelectorAll('.timeline-item');
-  timelineItems.forEach(item => {
-    const card = item.querySelector('.timeline-content-card');
-    card.addEventListener('click', () => {
-      // Toggle current item
-      const isActive = item.classList.contains('active');
-      
-      // Close all items
-      timelineItems.forEach(i => i.classList.remove('active'));
-      
-      // Open current if it wasn't active
-      if (!isActive) {
-        item.classList.add('active');
-      }
-    });
-  });
+
 
   // 4. Accordion (Terms & Privacy Policies)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
