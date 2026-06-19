@@ -1,4 +1,4 @@
-const GAS_WEB_APP_URL = 'YOUR_GAS_WEB_APP_URL_HERE';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwRqmI1_GBfy4Nw-hOaZhFP9BHZOw3O5ALvrXNwZNk2BqwZYKZFOPaYYh1qBoAMTgI4/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
   
