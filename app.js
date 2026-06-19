@@ -1,3 +1,5 @@
+const GAS_WEB_APP_URL = 'YOUR_GAS_WEB_APP_URL_HERE';
+
 document.addEventListener('DOMContentLoaded', () => {
   
   // 1. Header Scroll Effect
@@ -210,7 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       if (isValid) {
-        // Collect form data for representation
+        const submitButton = form.querySelector('.btn-submit');
+        const originalButtonText = submitButton.textContent;
+        
+        // 送信中の状態に変更（連打防止）
+        submitButton.disabled = true;
+        submitButton.textContent = '送信中...';
+        
+        // フォームデータの作成
         const formData = {
           name: nameInput.value.trim(),
           age: ageInput.value.trim(),
@@ -222,25 +231,55 @@ document.addEventListener('DOMContentLoaded', () => {
           inquiry: document.getElementById('inquiry').value.trim()
         };
 
-        // Add companion details if 2 participants are selected
+        // 同行者の情報を追加
         if (formData.participants === '2' && companionNameInput && companionAgeInput && companionRelSelect) {
           formData.companionName = companionNameInput.value.trim();
           formData.companionAge = companionAgeInput.value.trim();
           formData.companionRelationship = companionRelSelect.options[companionRelSelect.selectedIndex].text;
         }
-        
-        console.log('Application submitted successfully:', JSON.stringify(formData));
-        
-        // Show success modal
-        modal.classList.add('active');
-        
-        // Reset form
-        form.reset();
 
-        // Hide companion wrapper on reset
-        if (companionWrapper) {
-          companionWrapper.style.display = 'none';
+        // URLSearchParams形式に変換（GASで受け取りやすいように）
+        const postData = new URLSearchParams();
+        for (const key in formData) {
+          postData.append(key, formData[key]);
         }
+
+        // GASへの送信
+        fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          body: postData,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(result => {
+          if (result.result === 'success') {
+            // 成功モーダルの表示
+            modal.classList.add('active');
+            form.reset();
+            if (companionWrapper) {
+              companionWrapper.style.display = 'none';
+            }
+          } else {
+            console.error('GAS Error:', result.error);
+            alert('お申し込みの送信に失敗しました。システムエラーが発生した可能性があります。お手数ですが、少し時間をおいてからやり直すか、お問い合わせ窓口まで直接ご連絡ください。');
+          }
+        })
+        .catch(error => {
+          console.error('Submission error:', error);
+          alert('通信エラーが発生しました。インターネットの接続状況をご確認の上、再度お試しください。');
+        })
+        .finally(() => {
+          // ボタンの状態を復元
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        });
       } else {
         // Scroll to the first error
         const firstError = document.querySelector('.has-error');
