@@ -61,18 +61,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalClose = document.getElementById('modalCloseBtn');
   const participantsSelect = document.getElementById('participants');
   const companionWrapper = document.getElementById('companion_info_wrapper');
+  const mealType2Wrapper = document.getElementById('meal_type_2_wrapper');
+  const allergyNoRadio = document.getElementById('allergy_no');
+  const allergyYesRadio = document.getElementById('allergy_yes');
+  const allergyDetailWrapper = document.getElementById('allergy_detail_wrapper');
+  const allergyDetailInput = document.getElementById('allergy_detail');
 
-  // Toggle Companion Info wrapper based on number of participants
+  // Toggle Companion Info & Meal wrapper based on number of participants
   if (participantsSelect && companionWrapper) {
     participantsSelect.addEventListener('change', () => {
       if (participantsSelect.value === '2') {
         companionWrapper.style.display = 'block';
+        if (mealType2Wrapper) mealType2Wrapper.style.display = 'block';
       } else {
         companionWrapper.style.display = 'none';
+        if (mealType2Wrapper) mealType2Wrapper.style.display = 'none';
         // Clear companion inputs when switching back to 1 participant
         const companionName = document.getElementById('companion_name');
         const companionAge = document.getElementById('companion_age');
         const companionRel = document.getElementById('companion_relationship');
+        const mealType2Select = document.getElementById('meal_type_2');
         if (companionName) {
           companionName.value = '';
           clearError(companionName);
@@ -85,8 +93,29 @@ document.addEventListener('DOMContentLoaded', () => {
           companionRel.value = '';
           clearError(companionRel);
         }
+        if (mealType2Select) {
+          mealType2Select.value = 'adult';
+          clearError(mealType2Select);
+        }
       }
     });
+  }
+
+  // Toggle Allergy Detail based on radio selection
+  if (allergyNoRadio && allergyYesRadio && allergyDetailWrapper) {
+    const handleAllergyToggle = () => {
+      if (allergyYesRadio.checked) {
+        allergyDetailWrapper.style.display = 'block';
+      } else {
+        allergyDetailWrapper.style.display = 'none';
+        if (allergyDetailInput) {
+          allergyDetailInput.value = '';
+          clearError(allergyDetailInput);
+        }
+      }
+    };
+    allergyNoRadio.addEventListener('change', handleAllergyToggle);
+    allergyYesRadio.addEventListener('change', handleAllergyToggle);
   }
   
   if (form) {
@@ -184,6 +213,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
+      // Validate Meal Selection
+      const mealType1Select = document.getElementById('meal_type_1');
+      const mealType2Select = document.getElementById('meal_type_2');
+      if (mealType1Select && mealType1Select.value === '') {
+        showError(mealType1Select, '代表者様のお食事のご希望を選択してください。');
+        isValid = false;
+      } else if (mealType1Select) {
+        clearError(mealType1Select);
+      }
+
+      if (participantsSelect && participantsSelect.value === '2' && mealType2Select) {
+        if (mealType2Select.value === '') {
+          showError(mealType2Select, '同行者様のお食事のご希望を選択してください。');
+          isValid = false;
+        } else {
+          clearError(mealType2Select);
+        }
+      }
+
+      // Validate Allergy Detail
+      const allergyYesRadio = document.getElementById('allergy_yes');
+      const allergyDetailInput = document.getElementById('allergy_detail');
+      if (allergyYesRadio && allergyYesRadio.checked && allergyDetailInput) {
+        if (allergyDetailInput.value.trim() === '') {
+          showError(allergyDetailInput, 'アレルギーの詳細を入力してください。');
+          isValid = false;
+        } else {
+          clearError(allergyDetailInput);
+        }
+      } else if (allergyDetailInput) {
+        clearError(allergyDetailInput);
+      }
+
       // Validate Course Selection
       const courseSelect = document.getElementById('tour_course');
       if (courseSelect.value === '') {
@@ -227,6 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
           phone: phoneInput.value.trim(),
           address: addressInput.value.trim(),
           participants: participantsSelect ? participantsSelect.value : '1',
+          meal_type_1: mealType1Select ? mealType1Select.value : 'adult',
+          allergy_check: (document.querySelector('input[name="allergy_check"]:checked') || {}).value || 'no',
+          allergy_detail: allergyDetailInput ? allergyDetailInput.value.trim() : '',
           course: courseSelect.options[courseSelect.selectedIndex].text,
           inquiry: document.getElementById('inquiry').value.trim()
         };
@@ -236,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
           formData.companionName = companionNameInput.value.trim();
           formData.companionAge = companionAgeInput.value.trim();
           formData.companionRelationship = companionRelSelect.options[companionRelSelect.selectedIndex].text;
+          formData.meal_type_2 = mealType2Select ? mealType2Select.value : 'adult';
         }
 
         // URLSearchParams形式に変換（GASで受け取りやすいように）

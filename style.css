@@ -778,6 +778,28 @@ textarea.form-control {
   gap: 12px;
 }
 
+.form-radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  min-height: 40px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
 .checkbox-label {
   display: flex;
   align-items: flex-start;
