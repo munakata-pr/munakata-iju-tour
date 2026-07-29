@@ -289,7 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
           phone: phoneInput.value.trim(),
           address: addressInput.value.trim(),
           participants: participantsSelect ? participantsSelect.value : '1',
-          meal_type_1: getSelectedText(mealType1Select),
+          // GAS側(doPost)が "adult"/"child"/"none" のコード値を日本語に変換する実装のため、
+          // ここでは必ず value（コード値）を送ること。表示テキストを送るとGASの判定に落ちて「不要」になる。
+          meal_type_1: mealType1Select ? mealType1Select.value : '',
           allergy_check: (document.querySelector('input[name="allergy_check"]:checked') || {}).value || 'no',
           allergy_detail: allergyDetailInput ? allergyDetailInput.value.trim() : '',
           course: courseSelect.options[courseSelect.selectedIndex].text,
@@ -301,7 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
           formData.companionName = companionNameInput.value.trim();
           formData.companionAge = companionAgeInput.value.trim();
           formData.companionRelationship = companionRelSelect.options[companionRelSelect.selectedIndex].text;
-          formData.meal_type_2 = getSelectedText(mealType2Select);
+          // 同上：GASがコード値を変換するため value を送る
+          formData.meal_type_2 = mealType2Select ? mealType2Select.value : '';
         }
 
         // URLSearchParams形式に変換（GASで受け取りやすいように）
@@ -369,15 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // セレクトボックスで選択中の選択肢の「表示テキスト」を返す
-  // （スプレッドシート・通知メールに value のコード値ではなく日本語が入るようにするため）
-  function getSelectedText(selectElement) {
-    if (!selectElement || selectElement.selectedIndex < 0) return '';
-    const option = selectElement.options[selectElement.selectedIndex];
-    if (!option || option.value === '') return '';
-    return option.text;
-  }
-
   function showError(inputElement, message) {
     // Check if checkbox
     let formGroup;
