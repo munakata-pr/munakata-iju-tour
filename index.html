@@ -240,8 +240,9 @@
               </div>
               <div class="timeline-body">
                 <p class="timeline-desc">
-                  <span class="phrase">美しい玄界灘を一望できる</span><span class="phrase">老舗「玄海旅館」にて、</span><span class="phrase">新鮮な地魚を贅沢に使った</span><span class="phrase">ランチをお楽しみください。</span><span class="phrase">お食事代（大人：海鮮丼ランチ</span><span class="phrase">2,000円/人、</span><span class="phrase">お子様：お子様ランチ</span><span class="phrase">1,000円/人）は</span><span class="phrase">当日自己負担となります。</span><span class="phrase">※大人用ランチはアレルギーを除き</span><span class="phrase">一律同一メニューです。</span><br>
-                  <small style="display: block; margin-top: 8px; color: #d32f2f;">※写真はイメージです。当日の仕入れ状況により内容が異なる場合があります。</small>
+                  <span class="phrase">美しい玄界灘を一望できる</span><span class="phrase">老舗「玄海旅館」にて、</span><span class="phrase">新鮮な地魚を贅沢に使った</span><span class="phrase">ランチをお楽しみください。</span><span class="phrase">お食事代（大人：海鮮丼ランチ</span><span class="phrase">2,000円/人、</span><span class="phrase">お子様：お子様ランチ</span><span class="phrase">1,000円/人・小学生以下）は</span><span class="phrase">当日、現地にて</span><span class="phrase">現金でお支払いいただきます。</span><span class="phrase">※大人用ランチはアレルギーを除き</span><span class="phrase">一律同一メニューです。</span><br>
+                  <small style="display: block; margin-top: 8px; color: #d32f2f;">※乳幼児など食事が不要な方は、お申し込みフォームで「不要」をお選びください。</small>
+                  <small style="display: block; margin-top: 4px; color: #d32f2f;">※写真はイメージです。当日の仕入れ状況により内容が異なる場合があります。</small>
                 </p>
                 <div class="timeline-img-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
                   <div>
@@ -415,21 +416,24 @@
           <!-- Meal Selection -->
           <div class="form-group">
             <label class="form-label">昼食（玄海旅館でのランチ）のご希望<span class="required">必須</span></label>
+            <p style="font-size: 1.2rem; line-height: 1.6; color: var(--text-dark); margin: 4px 0 8px;">ご参加者お一人ずつ、当日召し上がるお食事をお選びください。<strong>乳幼児など食事が不要な方は「不要（食事なし・乳幼児など）」</strong>をお選びいただけます。お食事代は当日、現地にて現金でお支払いください。</p>
             <div style="border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 16px; background-color: var(--bg-light); display: flex; flex-direction: column; gap: 16px;">
               <div class="form-group" style="margin-bottom: 0;">
                 <label for="meal_type_1" class="form-label" style="font-weight: bold; margin-bottom: 6px; font-size: 1.3rem;">代表者様（1人目）のお食事</label>
                 <select id="meal_type_1" class="form-control" required>
-                  <option value="adult" selected>大人用 海鮮丼ランチ（2,000円/人・当日払い）</option>
-                  <option value="child">お子様ランチ（1,000円/人・当日払い）</option>
-                  <option value="none">不要（食事なし）</option>
+                  <option value="" selected>選択してください</option>
+                  <option value="adult">大人用 海鮮丼ランチ（2,000円/人・当日払い）</option>
+                  <option value="child">お子様ランチ（1,000円/人・当日払い／小学生以下）</option>
+                  <option value="none">不要（食事なし・乳幼児など）</option>
                 </select>
               </div>
               <div id="meal_type_2_wrapper" class="form-group" style="display: none; margin-bottom: 0;">
                 <label for="meal_type_2" class="form-label" style="font-weight: bold; margin-bottom: 6px; font-size: 1.3rem;">同行者様（2人目）のお食事</label>
                 <select id="meal_type_2" class="form-control">
-                  <option value="adult" selected>大人用 海鮮丼ランチ（2,000円/人・当日払い）</option>
-                  <option value="child">お子様ランチ（1,000円/人・当日払い）</option>
-                  <option value="none">不要（食事なし）</option>
+                  <option value="" selected>選択してください</option>
+                  <option value="adult">大人用 海鮮丼ランチ（2,000円/人・当日払い）</option>
+                  <option value="child">お子様ランチ（1,000円/人・当日払い／小学生以下）</option>
+                  <option value="none">不要（食事なし・乳幼児など）</option>
                 </select>
               </div>
             </div>
