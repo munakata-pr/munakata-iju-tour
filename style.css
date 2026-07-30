@@ -254,7 +254,7 @@ button, input, select, textarea {
   padding-bottom: 120px;
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.6) 100%), 
-              url('assets/hero_munakata.png') no-repeat center 88%/cover;
+              url('assets/hero_munakata.webp') no-repeat center 88%/cover;
   min-height: 80vh;
   display: flex;
   align-items: center;
