@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google tag (gtag.js) - Google アナリティクス（GA4） -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R87EMJB9LG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-R87EMJB9LG');
+  </script>
   <title>宗像市暮らし体感バスツアー 特設サイト</title>
   <meta name="description" content="福岡県宗像市への移住をご検討中の方を対象とした、お試し居住・暮らし体感バスツアーのご案内・お申し込み特設サイトです。実際の暮らしや住環境、先輩移住者の声を現地で体感いただけます。">
   <meta name="keywords" content="宗像市,移住,定住,バスツアー,暮らし体験,お試し居住,福岡県,移住支援,子育て世帯">
@@ -80,9 +90,14 @@
 
   <!-- Favicon -->
   <link rel="icon" href="assets/favicon.png" type="image/png">
-  
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#3b82f6">
+
+  <!-- ファーストビュー背景画像の先読み（表示速度改善） -->
+  <link rel="preload" as="image" href="assets/hero_munakata.webp" type="image/webp" fetchpriority="high">
+
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css?v=1.0.3">
+  <link rel="stylesheet" href="style.css?v=1.0.4">
   
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -221,7 +236,7 @@
               </div>
               <div class="tour-card-info-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                 <span class="tour-card-info-label">お買い物時のご注意</span>
-                <span style="font-size: 1.2rem; line-height: 1.5; color: var(--text-dark);">道の駅むなかたでのお買い物（ご希望者のみ）で鮮魚等の生鮮食品を持ち帰るため、<strong style="color: #d32f2f;">必要な方はクーラーボックス等を各自ご持参ください。（お預かりはいたしかねます）</strong></span>
+                <span style="font-size: 1.3rem; line-height: 1.5; color: var(--text-dark);">道の駅むなかたでのお買い物（ご希望者のみ）で鮮魚等の生鮮食品を持ち帰るため、<strong style="color: #d32f2f;">必要な方はクーラーボックス等を各自ご持参ください。（お預かりはいたしかねます）</strong></span>
               </div>
             </div>
             <a href="#booking" class="tour-card-action">このツアーを申し込む</a>
@@ -291,7 +306,7 @@
               <div class="timeline-body">
                 <p class="timeline-desc">
                   <span class="phrase">九州屈指の売上を誇る</span><span class="phrase">「道の駅むなかた」で、</span><span class="phrase">鐘崎漁港や大島から</span><span class="phrase">届いたばかりの</span><span class="phrase">新鮮な魚介類や</span><span class="phrase">地元の朝採れ野菜の</span><span class="phrase">ショッピングを楽しめます。</span><br>
-                  <small style="display: block; margin-top: 8px; color: var(--text-dark); line-height: 1.5;">※道の駅むなかたでのお買い物（ご希望者のみ）で鮮魚等の生鮮食品を持ち帰るため、<strong style="color: #d32f2f;">必要な方はクーラーボックス等を各自ご持参ください。（お預かりはいたしかねます）</strong></small>
+                  <small style="display: block; margin-top: 8px; color: var(--text-dark); line-height: 1.5; font-size: 1.25rem;">※道の駅むなかたでのお買い物（ご希望者のみ）で鮮魚等の生鮮食品を持ち帰るため、<strong style="color: #d32f2f;">必要な方はクーラーボックス等を各自ご持参ください。（お預かりはいたしかねます）</strong></small>
                 </p>
                 <div class="timeline-img-wrap">
                   <img src="assets/michinoeki_munakata_new.webp" alt="道の駅むなかた物産直売所" loading="lazy">
@@ -311,21 +326,21 @@
               <div class="timeline-body">
                 <p class="timeline-desc">
                   <span class="phrase">美しい玄界灘を一望できる</span><span class="phrase">老舗「玄海旅館」にて、</span><span class="phrase">新鮮な地魚を贅沢に使った</span><span class="phrase">ランチをお楽しみください。</span><span class="phrase">お食事代（大人：海鮮丼ランチ</span><span class="phrase">2,000円/人、</span><span class="phrase">お子様：お子様ランチ</span><span class="phrase">1,000円/人・小学生以下）は</span><span class="phrase">当日、現地にて</span><span class="phrase">現金でお支払いいただきます。</span><span class="phrase">※大人用ランチはアレルギーを除き</span><span class="phrase">一律同一メニューです。</span><br>
-                  <small style="display: block; margin-top: 8px; color: #d32f2f;">※乳幼児など食事が不要な方は、お申し込みフォームで「不要」をお選びください。</small>
-                  <small style="display: block; margin-top: 4px; color: #d32f2f;">※写真はイメージです。当日の仕入れ状況により内容が異なる場合があります。</small>
+                  <small style="display: block; margin-top: 8px; color: #d32f2f; font-size: 1.25rem;">※乳幼児など食事が不要な方は、お申し込みフォームで「不要」をお選びください。</small>
+                  <small style="display: block; margin-top: 4px; color: #d32f2f; font-size: 1.25rem;">※写真はイメージです。当日の仕入れ状況により内容が異なる場合があります。</small>
                 </p>
-                <div class="timeline-img-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                <div class="timeline-img-grid">
                   <div>
                     <div class="timeline-img-wrap" style="aspect-ratio: 4 / 3; max-height: none;">
                       <img src="assets/genkai_lunch.webp" alt="玄海旅館の海鮮丼ランチ（イメージ）" loading="lazy">
                     </div>
-                    <span style="display: block; font-size: 1.1rem; text-align: center; margin-top: 4px; color: var(--text-dark);">大人用：海鮮丼ランチ</span>
+                    <span class="timeline-img-caption">大人用：海鮮丼ランチ</span>
                   </div>
                   <div>
                     <div class="timeline-img-wrap" style="aspect-ratio: 4 / 3; max-height: none;">
                       <img src="assets/kids_lunch.jpg" alt="玄海旅館のお子様ランチ（イメージ）" loading="lazy">
                     </div>
-                    <span style="display: block; font-size: 1.1rem; text-align: center; margin-top: 4px; color: var(--text-dark);">お子様用：お子様ランチ</span>
+                    <span class="timeline-img-caption">お子様用：お子様ランチ</span>
                   </div>
                 </div>
               </div>
@@ -712,6 +727,6 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="app.js?v=1.0.3"></script>
+  <script src="app.js?v=1.0.4"></script>
 </body>
 </html>

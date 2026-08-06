@@ -329,6 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(result => {
           if (result.result === 'success') {
+            // GA4: 申し込み完了イベントを送信（コンバージョン計測用）
+            if (typeof gtag === 'function') {
+              gtag('event', 'generate_lead', {
+                event_category: 'booking_form',
+                event_label: 'tour_application'
+              });
+            }
             // 成功モーダルの表示
             modal.classList.add('active');
             form.reset();

@@ -683,6 +683,21 @@ button, input, select, textarea {
   object-fit: cover;
 }
 
+.timeline-img-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.timeline-img-caption {
+  display: block;
+  font-size: 1.3rem;
+  text-align: center;
+  margin-top: 6px;
+  color: var(--text-dark);
+}
+
 /* Application Form Section */
 .booking {
   background-color: var(--bg-light);
@@ -791,6 +806,9 @@ textarea.form-control {
   gap: 8px;
   font-size: 1.4rem;
   cursor: pointer;
+  /* タップ領域の確保（44px以上） */
+  padding: 10px 12px 10px 4px;
+  margin: -6px 0;
 }
 
 .radio-label input[type="radio"] {
@@ -1027,7 +1045,7 @@ textarea.form-control {
 
 .footer-contact-text span {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-light);
   font-weight: 700;
 }
@@ -1101,6 +1119,12 @@ textarea.form-control {
   align-items: center;
   font-size: 1.3rem;
   color: var(--text-light);
+}
+
+.footer-bottom a {
+  /* タップ領域の確保 */
+  display: inline-block;
+  padding: 10px 4px;
 }
 
 /* Booking Success Modal */
@@ -1307,5 +1331,60 @@ textarea.form-control {
   
   .timeline-content-card {
     padding: 16px;
+  }
+}
+
+/* スマホ幅：ヘッダーのはみ出し防止・コンパクト化 */
+@media (max-width: 600px) {
+  .header-container {
+    gap: 8px;
+  }
+
+  .header-logo {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .logo-main {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .logo-sub {
+    display: none;
+  }
+
+  .header-cta {
+    white-space: nowrap;
+    font-size: 1.2rem;
+    padding: 8px 14px;
+    flex-shrink: 0;
+  }
+
+  .menu-toggle {
+    flex-shrink: 0;
+  }
+
+  /* コース紹介カード内の項目をラベル＋値の縦積みに */
+  .tour-card-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+}
+
+/* 小型スマホ：ランチ写真2枚並びを縦積みに */
+@media (max-width: 480px) {
+  .timeline-img-grid {
+    grid-template-columns: 1fr;
   }
 }
