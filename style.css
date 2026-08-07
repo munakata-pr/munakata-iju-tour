@@ -759,11 +759,14 @@ button, input, select, textarea {
 .form-label .required {
   background-color: var(--secondary-color);
   color: var(--bg-white);
-  font-size: 1.0rem;
+  font-size: 1.1rem;
   padding: 2px 8px;
   border-radius: 50px;
   margin-left: 8px;
   vertical-align: middle;
+  /* バッジがラベル折返し時に「必/須」と泣き別れしないようにする */
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .form-control {
@@ -771,7 +774,8 @@ button, input, select, textarea {
   border: 1px solid var(--border-color);
   background-color: var(--bg-light);
   padding: 14px 18px;
-  font-size: 1.5rem;
+  /* 16px未満だとiPhone Safariがフォーカス時に自動ズームするため1.6rem必須 */
+  font-size: 1.6rem;
   border-radius: var(--radius-sm);
   transition: var(--transition-smooth);
 }
@@ -1298,7 +1302,7 @@ textarea.form-control {
   
   .form-group.row-2 {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 20px; /* 縦積み時に入力欄と次のラベルが密着しないようにする */
   }
   
   .footer-top {
