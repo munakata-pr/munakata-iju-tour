@@ -97,7 +97,7 @@
   <link rel="preload" as="image" href="assets/hero_munakata.webp" type="image/webp" fetchpriority="high">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css?v=1.0.5">
+  <link rel="stylesheet" href="style.css?v=1.0.6">
   
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -144,10 +144,27 @@
           <span class="phrase">新しい暮らしの舞台を</span><br class="pc-only"><span class="phrase">探しに行こう</span>
         </h1>
         <p class="hero-desc">
-          <span class="phrase">海と山に囲まれた</span><span class="phrase">自然豊かな福岡県宗像市。</span><br>
+          <span class="phrase">海と山に囲まれた</span><span class="phrase">自然豊かな福岡県宗像市。</span><span class="hero-desc-tail"><br>
           <span class="phrase">実際の街の様子、</span><span class="phrase">充実した子育て環境、</span><br>
-          <span class="phrase">そして先輩移住者の</span><span class="phrase">リアルな声を現地で体感する</span><span class="phrase">特別な1日をお届けします。</span>
+          <span class="phrase">そして先輩移住者の</span><span class="phrase">リアルな声を現地で体感する</span><span class="phrase">特別な1日をお届けします。</span></span>
         </p>
+
+        <!-- 開催情報（意思決定に必要な事実をファーストビューに明示） -->
+        <ul class="hero-facts">
+          <li class="hero-fact">
+            <span class="hero-fact-label">開催日</span>
+            <span class="hero-fact-value">2026年8月29日<span class="hero-fact-dow">(土)</span></span>
+          </li>
+          <li class="hero-fact">
+            <span class="hero-fact-label">参加費</span>
+            <span class="hero-fact-value">無料<span class="hero-fact-note">昼食のみ実費</span></span>
+          </li>
+          <li class="hero-fact hero-fact-deadline">
+            <span class="hero-fact-label">申込締切</span>
+            <span class="hero-fact-value">8月23日<span class="hero-fact-dow">(日)</span><span class="hero-fact-note">先着順・定員に達し次第終了</span></span>
+          </li>
+        </ul>
+
         <div class="hero-actions">
           <a href="#tours" class="btn btn-primary">ツアー詳細を見る</a>
           <a href="#booking" class="btn btn-secondary">お申し込みはこちら</a>
@@ -255,7 +272,7 @@
         <h2 class="section-title">スケジュール</h2>
       </div>
       
-      <div class="itinerary-container">
+      <div class="itinerary-container itinerary-collapse" id="itineraryCollapse">
         <div class="timeline">
           <!-- Item 1 -->
           <div class="timeline-item">
@@ -405,6 +422,12 @@
           </div>
         </div>
       </div>
+
+      <!-- スマホのみ表示：スケジュールの開閉ボタン（申込フォームまでの距離を短縮するため） -->
+      <button type="button" class="itinerary-toggle" id="itineraryToggle" aria-expanded="false" aria-controls="itineraryCollapse">
+        <span class="itinerary-toggle-text">当日のスケジュールをすべて見る</span>
+        <span class="itinerary-toggle-icon" aria-hidden="true"></span>
+      </button>
     </div>
   </section>
 
@@ -726,7 +749,48 @@
     </div>
   </footer>
 
+  <!-- スマホのみ表示：常時追従の申込ボタン -->
+  <a href="#booking" class="sticky-cta" id="stickyCta">
+    <span class="sticky-cta-text">
+      <span class="sticky-cta-main">参加費無料・8/29(土)開催</span>
+      <span class="sticky-cta-sub">申込締切 8/23(日)・先着順</span>
+    </span>
+    <span class="sticky-cta-btn">申し込む</span>
+  </a>
+
   <!-- Scripts -->
+  <script>
+    // スマホ向けUI（追従CTAの表示制御・スケジュール開閉）。フォーム送信処理には一切関与しない。
+    (function () {
+      try {
+        var toggle = document.getElementById('itineraryToggle');
+        var collapse = document.getElementById('itineraryCollapse');
+        if (toggle && collapse) {
+          toggle.addEventListener('click', function () {
+            var open = collapse.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            toggle.querySelector('.itinerary-toggle-text').textContent =
+              open ? 'スケジュールを閉じる' : '当日のスケジュールをすべて見る';
+            if (!open) {
+              var sec = document.getElementById('itinerary');
+              if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        }
+
+        // 申込フォームが画面に入ったら追従CTAを隠す（重複を避ける）
+        var sticky = document.getElementById('stickyCta');
+        var booking = document.getElementById('booking');
+        if (sticky && booking && 'IntersectionObserver' in window) {
+          new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              sticky.classList.toggle('is-hidden', e.isIntersecting);
+            });
+          }, { rootMargin: '0px 0px -55% 0px' }).observe(booking);
+        }
+      } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
+    })();
+  </script>
   <script src="app.js?v=1.0.4"></script>
 </body>
 </html>
