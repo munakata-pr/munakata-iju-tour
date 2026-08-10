@@ -1658,3 +1658,80 @@ textarea.form-control {
   .sticky-cta-main { font-size: 1.2rem; }
   .sticky-cta-btn { padding: 0 16px; font-size: 1.4rem; }
 }
+
+/* =========================================================================
+   2026-08-10 コントラスト改善（WCAG AA 4.5:1 対応）
+   ブランドのブルーは維持し、白文字を載せる面と小さな文字だけ濃い階調に置換。
+   白/#3b82f6 = 3.68 → 白/#1d4ed8 = 6.70
+   白/#ef4444 = 3.76 → 白/#dc2626 = 4.83
+   ========================================================================= */
+:root {
+  --primary-strong: #1d4ed8; /* 白文字を載せる面・小さな文字用のブルー */
+  --danger-strong: #dc2626;  /* 同上のレッド */
+  --text-muted-aa: #64748b;  /* 補足文用グレー（白背景で4.76:1） */
+}
+
+/* 白文字を載せる面 */
+.header-cta,
+.btn-primary,
+.tour-status.recruiting,
+.tour-card-action,
+.btn-submit,
+.modal-close-btn {
+  background-color: var(--primary-strong);
+}
+
+/* 「必須」バッジ：白/#f87171 = 2.77 と最も低かったため濃い赤に */
+.form-label .required,
+.required {
+  background-color: var(--danger-strong);
+  font-size: 1.2rem;
+}
+
+.header-cta:hover,
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+/* 白背景に置くブランドカラーの文字 */
+.hero-tag,
+.section-subtitle,
+.timeline-time,
+.tour-card-info-label,
+.overview-dl dt,
+.form-agreement-box h5,
+.accordion-inner-text h5,
+h5 {
+  color: var(--primary-strong);
+}
+
+/* 補足文のグレー：#7f8c8d は薄いグレー背景で 3.32 だったため一段濃く */
+:root { --text-light: #64748b; }
+
+/* ヒーローの開催情報 */
+.hero-fact-label {
+  background: var(--primary-strong);
+  font-size: 1.3rem;
+}
+
+.hero-fact-note {
+  font-size: 1.3rem;
+  color: var(--text-muted-aa);
+}
+
+.hero-fact-deadline .hero-fact-label { background: var(--danger-strong); }
+.hero-fact-deadline .hero-fact-value,
+.hero-fact-deadline .hero-fact-note { color: var(--danger-strong); }
+
+@media (max-width: 768px) {
+  .hero-fact-label { font-size: 1.3rem; }
+  .hero-fact-note { font-size: 1.3rem; }
+
+  /* 追従CTA */
+  .sticky-cta-btn { background: var(--primary-strong); }
+  .sticky-cta-sub { color: var(--danger-strong); }
+}
+
+@media (max-width: 400px) {
+  .sticky-cta-main { font-size: 1.3rem; }
+}
