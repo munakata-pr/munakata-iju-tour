@@ -274,6 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       if (isValid) {
+        const errorSummary = document.getElementById('formErrorSummary');
+        if (errorSummary) {
+          errorSummary.classList.remove('active');
+        }
         const submitButton = form.querySelector('.btn-submit');
         const originalButtonText = submitButton.textContent;
         
@@ -357,6 +361,13 @@ document.addEventListener('DOMContentLoaded', () => {
           submitButton.textContent = originalButtonText;
         });
       } else {
+        // エラーサマリーを表示（未入力箇所が何件あるかを明示し、探す手間をなくす）
+        const errorSummary = document.getElementById('formErrorSummary');
+        if (errorSummary) {
+          const errorCount = document.querySelectorAll('.has-error').length;
+          errorSummary.textContent = '入力内容に ' + errorCount + ' 件の未入力・誤りがあります。赤く表示された項目をご確認ください。';
+          errorSummary.classList.add('active');
+        }
         // Scroll to the first error
         const firstError = document.querySelector('.has-error');
         if (firstError) {
@@ -366,6 +377,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  /* --- リアルタイムバリデーション（2026-08-15 追加） ---
+     従来は送信ボタンを押すまでエラーが分からず、未入力が複数あると一度に大量のエラーが
+     出て離脱の原因になっていた。入力欄を離れた時点で1項目ずつ検証し、入力を再開したら
+     エラー表示を消す。判定ルールは上の submit ハンドラと完全に同一にすること。 */
+  if (form) {
+    const emailPatternRT = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phonePatternRT = /^[0-9-]{10,13}$/;
+
+    const validators = {
+      name: (el) => el.value.trim() === '' ? 'お名前を入力してください。' : null,
+      age: (el) => {
+        if (el.value.trim() === '') return '年齢を入力してください。';
+        if (isNaN(el.value) || parseInt(el.value) <= 0) return '正しい年齢を入力してください。';
+        return null;
+      },
+      email: (el) => {
+        if (el.value.trim() === '') return 'メールアドレスを入力してください。';
+        if (!emailPatternRT.test(el.value.trim())) return '有効なメールアドレス形式で入力してください。';
+        return null;
+      },
+      phone: (el) => {
+        if (el.value.trim() === '') return '電話番号を入力してください。';
+        if (!phonePatternRT.test(el.value.replace(/-/g, ''))) return '有効な電話番号を入力してください。';
+        return null;
+      },
+      address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null,
+      companion_name: (el) => {
+        if (!participantsSelect || participantsSelect.value !== '2') return null;
+        return el.value.trim() === '' ? '同行者様のお名前を入力してください。' : null;
+      },
+      companion_age: (el) => {
+        if (!participantsSelect || participantsSelect.value !== '2') return null;
+        if (el.value.trim() === '') return '同行者様の年齢を入力してください。';
+        if (isNaN(el.value) || parseInt(el.value) <= 0) return '正しい年齢を入力してください。';
+        return null;
+      },
+      allergy_detail: (el) => {
+        const allergyYes = document.getElementById('allergy_yes');
+        if (!allergyYes || !allergyYes.checked) return null;
+        return el.value.trim() === '' ? 'アレルギーの詳細を入力してください。' : null;
+      }
+    };
+
+    Object.keys(validators).forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      // 入力欄を離れたときに検証（未入力のまま素通りしたことに気づける）
+      el.addEventListener('blur', () => {
+        const message = validators[id](el);
+        if (message) {
+          showError(el, message);
+        } else {
+          clearError(el);
+        }
+      });
+      // 入力を再開したらエラー表示を消す（打ちながら赤いままだと不安になるため）
+      el.addEventListener('input', () => {
+        if (validators[id](el) === null) {
+          clearError(el);
+        }
+      });
+    });
+
+    // セレクトは選択された時点でエラーを解除
+    ['tour_course', 'companion_relationship', 'meal_type_1', 'meal_type_2'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('change', () => {
+        if (el.value !== '') clearError(el);
+      });
+    });
+
+    // 同意チェックはチェックされた時点でエラーを解除
+    ['lunch_agree', 'privacy_agree'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('change', () => {
+        if (el.checked) clearError(el);
+      });
+    });
+  }
+
   if (modalClose && modal) {
     modalClose.addEventListener('click', () => {
       modal.classList.remove('active');
@@ -393,7 +486,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!errorMsg) {
       errorMsg = document.createElement('div');
       errorMsg.className = 'form-error-msg';
-      formGroup.appendChild(errorMsg);
+      // 補足注記（.form-note）の下に埋もれないよう、入力欄の直下に差し込む。
+      // チェックボックスは label に内包されているため従来どおり末尾に追加する。
+      if (inputElement.type === 'checkbox') {
+        formGroup.appendChild(errorMsg);
+      } else {
+        inputElement.insertAdjacentElement('afterend', errorMsg);
+      }
     }
     errorMsg.textContent = message;
   }
