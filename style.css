@@ -884,6 +884,64 @@ textarea.form-control {
   margin-bottom: 8px;
 }
 
+/* --- フォーム改善（2026-08-15）: 着手ハードル低減・入力補助 --- */
+.form-intro-note {
+  background-color: #eff4ff;
+  border-left: 4px solid var(--primary-strong);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 14px 18px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.form-intro-note p {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.form-intro-note p + p {
+  margin-top: 8px;
+}
+
+.form-intro-note i {
+  color: var(--primary-strong);
+  margin-right: 4px;
+}
+
+.form-note {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--text-muted-aa);
+  margin: 6px 0 0;
+}
+
+.form-error-summary {
+  display: none;
+  background-color: #fef2f2;
+  border: 1px solid var(--danger-strong);
+  border-radius: var(--radius-sm);
+  color: var(--danger-strong);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.7;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-error-summary.active {
+  display: block;
+}
+
+.form-submit-note {
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: var(--text-muted-aa);
+  margin: 14px 0 0;
+}
+
 .form-submit-container {
   text-align: center;
   margin-top: 40px;
