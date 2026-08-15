@@ -97,7 +97,7 @@
   <link rel="preload" as="image" href="assets/hero_munakata.webp" type="image/webp" fetchpriority="high">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css?v=1.0.7">
+  <link rel="stylesheet" href="style.css?v=1.0.8">
   
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -439,6 +439,10 @@
         <div class="booking-header">
           <h3>ツアーお申し込み</h3>
           <p>以下のフォームに必要事項をご入力の上、送信してください。（先着順・定員に達し次第受付終了）<br><span style="color: #d32f2f; font-weight: bold; margin-top: 4px; display: inline-block;">【お申し込み締め切り：2026年8月23日(日) 23:59まで】</span></p>
+          <div class="form-intro-note">
+            <p><i class="fa-regular fa-clock"></i> <strong>入力は約2分で完了します。</strong></p>
+            <p><i class="fa-regular fa-circle-check"></i> <strong>この時点では参加確定ではありません。</strong>まずはお気軽にお申し込みください。先着順で受付のうえ、事務局より参加可否のご連絡をメールでお送りします。</p>
+          </div>
         </div>
         
         <form id="bookingForm" class="form-body" novalidate>
@@ -446,8 +450,7 @@
           <div class="form-group">
             <label for="tour_course" class="form-label">参加希望ツアーの選択<span class="required">必須</span></label>
             <select id="tour_course" class="form-control" required>
-              <option value="" disabled selected>選択してください</option>
-              <option value="course_1">【第1回】2026年8月29日(土) これからの暮らしと子育てを考えるファミリー向け体感ツアー</option>
+              <option value="course_1" selected>【第1回】2026年8月29日(土) これからの暮らしと子育てを考えるファミリー向け体感ツアー</option>
             </select>
           </div>
 
@@ -455,11 +458,11 @@
           <div class="form-group row-2">
             <div>
               <label for="name" class="form-label">代表者お名前（漢字）<span class="required">必須</span></label>
-              <input type="text" id="name" class="form-control" placeholder="山田 太郎" required>
+              <input type="text" id="name" class="form-control" placeholder="山田 太郎" autocomplete="name" required>
             </div>
             <div>
               <label for="age" class="form-label">年齢（旅行保険申請に必要）<span class="required">必須</span></label>
-              <input type="number" id="age" class="form-control" placeholder="32" min="1" max="120" required>
+              <input type="number" id="age" class="form-control" placeholder="32" min="1" max="120" inputmode="numeric" required>
             </div>
           </div>
 
@@ -467,18 +470,21 @@
           <div class="form-group row-2">
             <div>
               <label for="email" class="form-label">メールアドレス<span class="required">必須</span></label>
-              <input type="email" id="email" class="form-control" placeholder="yamada@example.com" required>
+              <input type="email" id="email" class="form-control" placeholder="yamada@example.com" autocomplete="email" inputmode="email" required>
+              <p class="form-note">※受付確認メールの送付先です。</p>
             </div>
             <div>
               <label for="phone" class="form-label">当日の連絡先（携帯電話番号）<span class="required">必須</span></label>
-              <input type="tel" id="phone" class="form-control" placeholder="09012345678" required>
+              <input type="tel" id="phone" class="form-control" placeholder="09012345678" autocomplete="tel" inputmode="tel" required>
+              <p class="form-note">※当日の集合・緊急連絡にのみ使用します。</p>
             </div>
           </div>
 
           <!-- Address -->
           <div class="form-group">
             <label for="address" class="form-label">現在のご住所<span class="required">必須</span></label>
-            <input type="text" id="address" class="form-control" placeholder="福岡県福岡市中央区天神1-2-3" required>
+            <input type="text" id="address" class="form-control" placeholder="福岡県福岡市中央区天神1-2-3" autocomplete="street-address" required>
+            <p class="form-note">※旅行保険の加入手続きに必要なため、番地までご記入ください。</p>
           </div>
 
           <!-- Number of Participants -->
@@ -505,7 +511,7 @@
                 </div>
                 <div>
                   <label for="companion_age" class="form-label">年齢（旅行保険申請に必要）<span class="required">必須</span></label>
-                  <input type="number" id="companion_age" class="form-control" placeholder="30" min="1" max="120">
+                  <input type="number" id="companion_age" class="form-control" placeholder="30" min="1" max="120" inputmode="numeric">
                 </div>
               </div>
 
@@ -599,7 +605,9 @@
           </div>
 
           <div class="form-submit-container">
+            <div id="formErrorSummary" class="form-error-summary" role="alert" aria-live="polite"></div>
             <button type="submit" class="btn btn-submit">ツアーに申し込む</button>
+            <p class="form-submit-note">送信後、ご入力のメールアドレス宛に受付確認メールをお送りします。<br>参加可否は後日、事務局より改めてご連絡いたします。</p>
           </div>
         </form>
       </div>
@@ -784,6 +792,6 @@
       } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
     })();
   </script>
-  <script src="app.js?v=1.0.4"></script>
+  <script src="app.js?v=1.0.5"></script>
 </body>
 </html>
