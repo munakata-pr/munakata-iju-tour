@@ -1039,6 +1039,8 @@ textarea.form-control {
   line-height: 1.8;
 }
 
+.accordion-inner-text h3,
+.accordion-inner-text h4,
 .accordion-inner-text h5 {
   font-weight: 700;
   color: var(--primary-color);
@@ -1046,6 +1048,8 @@ textarea.form-control {
   font-size: 1.5rem;
 }
 
+.accordion-inner-text h3:first-child,
+.accordion-inner-text h4:first-child,
 .accordion-inner-text h5:first-child {
   margin-top: 0;
 }
@@ -1758,6 +1762,8 @@ textarea.form-control {
 .tour-card-info-label,
 .overview-dl dt,
 .form-agreement-box h5,
+.accordion-inner-text h3,
+.accordion-inner-text h4,
 .accordion-inner-text h5,
 h5 {
   color: var(--primary-strong);
