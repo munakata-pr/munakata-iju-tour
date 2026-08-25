@@ -1799,3 +1799,99 @@ h5 {
 @media (max-width: 400px) {
   .sticky-cta-main { font-size: 1.3rem; }
 }
+
+/* ===============================================
+   受付終了（第1回：2026-08-23 締切）
+   次回募集時はこのブロックの適用箇所を外す
+   =============================================== */
+
+/* ステータスバッジ */
+.tour-status.closed {
+  background-color: var(--text-muted-aa);
+}
+
+/* 申込導線の無効化表示（a → span 化した要素） */
+.header-cta.is-closed {
+  background-color: var(--text-muted-aa);
+  cursor: default;
+}
+
+.header-cta.is-closed:hover {
+  background-color: var(--text-muted-aa);
+}
+
+.btn.is-disabled,
+.tour-card-action.is-disabled {
+  background-color: var(--bg-light);
+  color: var(--text-muted-aa);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tour-card-action.is-disabled {
+  display: block;
+  box-sizing: border-box;
+}
+
+.btn.is-disabled:hover,
+.tour-card-action.is-disabled:hover {
+  background-color: var(--bg-light);
+  transform: none;
+}
+
+/* 申込セクションの受付終了パネル */
+.booking-closed {
+  margin-top: 20px;
+  padding: 24px;
+  background-color: var(--bg-white);
+  border: 2px solid var(--danger-strong);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.booking-closed-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--danger-strong);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.booking-closed-text {
+  font-size: 1.4rem;
+  line-height: 1.9;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.booking-closed-contact {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 1.4rem;
+  line-height: 1.9;
+  color: var(--text-dark);
+}
+
+.booking-closed-contact-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.booking-closed-contact a {
+  color: var(--primary-strong);
+  text-decoration: underline;
+}
+
+/* 追従CTA（受付終了時） */
+.sticky-cta.is-closed .sticky-cta-btn {
+  background-color: var(--text-muted-aa);
+}
+
+@media (max-width: 480px) {
+  .booking-closed { padding: 18px; }
+  .booking-closed-title { font-size: 1.7rem; }
+}
