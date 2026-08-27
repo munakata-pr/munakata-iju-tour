@@ -2087,6 +2087,24 @@ h5 {
   white-space: nowrap;
 }
 
+.course-visit {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.course-visit.ok {
+  color: #047857;
+  background-color: rgba(16, 185, 129, 0.12);
+}
+
+.course-visit.ng {
+  color: #92400e;
+  background-color: rgba(251, 191, 36, 0.18);
+}
+
 .course-cap {
   font-size: 1.2rem;
   color: var(--text-light);
