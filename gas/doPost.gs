@@ -14,15 +14,30 @@
  *  Q:コース第1希望 R:コース第2希望 S:コース第3希望 T:講座参加のお子様 U:同行者(3〜4人目)
  */
 
-// 新しく追加した列（Q〜U）の見出しを1回だけ書き込む。
+// 第2回（11/3）の申込は「シート2」に記録する。第1回の記録はシート1に残す。
+var SHEET_NAME = 'シート2';
+
+function getTargetSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(SHEET_NAME);
+  if (!sh) sh = ss.insertSheet(SHEET_NAME);
+  return sh;
+}
+
+// シート2の見出し行（A〜U）を作成する。
 // エディタから手動実行する。既に見出しがある場合は上書きするだけで副作用はない。
 function setupHeaders() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  sheet.getRange(1, 17, 1, 5).setValues([[
-    'コース第1希望', 'コース第2希望', 'コース第3希望', '講座参加のお子様', '同行者(3〜4人目)'
-  ]]);
-  sheet.getRange(1, 17, 1, 5).setFontWeight('bold');
-  Logger.log('Q〜U列の見出しを設定しました');
+  var sheet = getTargetSheet();
+  var headers = [
+    '送信日時','希望ツアー','代表者お名前','年齢','メールアドレス','携帯電話番号','現在のご住所',
+    '参加総人数','同行者お名前','同行者年齢','代表者との関係','代表者食事','同行者食事',
+    'アレルギー有無','アレルギー詳細','ご質問・ご要望',
+    'コース第1希望','コース第2希望','コース第3希望','講座参加のお子様','同行者(3〜4人目)'
+  ];
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+  sheet.setFrozenRows(1);
+  Logger.log(SHEET_NAME + ' に A〜U 列の見出しを設定しました');
 }
 
 function doPost(e) {
@@ -30,7 +45,7 @@ function doPost(e) {
   lock.tryLock(10000); // 衝突を防ぐためのロック処理
 
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var sheet = getTargetSheet();
     var parameter = e.parameter;
 
     // フォームデータの受け取り
