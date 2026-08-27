@@ -398,14 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = true;
         submitButton.textContent = '送信中...';
 
-        /* --- GAS(doPost)互換の送信データを作成 ---
-           GAS側は第1回のフォーム項目（meal/allergy/companion1名分）を前提とした列構成のため、
-           第2回で増えた情報は既存パラメータに整形して格納する（GAS改修なしで受信できる）。
-           - コース希望（第1〜第3）      → course（文字列連結）
-           - 講座参加のお子様・3人目以降の同行者 → inquiry（先頭に整形テキストを付加）
-           - 食事・アレルギー（第2回は昼食持参で手配なし） → 固定値 none / no */
-        const inquiryLines = [];
-
+        /* --- GAS(doPost)への送信データを作成 ---
+           2026-08-27 のGAS改修で、コース希望・講座参加のお子様・3人目以降の同行者は
+           それぞれ専用パラメータ（専用列 Q〜U）に入る。inquiry は利用者が書いた本文のみを送る。
+           第2回は昼食持参のため meal_type_* / allergy_* は送らない（GAS側は未送信を空欄として扱う）。 */
         const kidsParts = [];
         for (let i = 1; i <= nChildren; i++) {
           const nameEl = document.getElementById('child' + i + '_name');
@@ -414,31 +410,18 @@ document.addEventListener('DOMContentLoaded', () => {
             kidsParts.push(i + '人目：' + nameEl.value.trim() + '（' + (GRADE_LABELS[gradeEl.value] || '学年未選択') + '）');
           }
         }
-        if (kidsParts.length > 0) {
-          inquiryLines.push('【講座に参加するお子様】' + kidsParts.join('／'));
-        }
 
-        // 3名以上の場合、GASの同行者列（1名分）に入りきらないため全同行者をテキスト化して残す
-        if (nParticipants >= 3) {
-          const compParts = [];
-          for (let i = 2; i <= nParticipants; i++) {
-            const ids = COMPANION_IDS[i];
-            const nameEl = document.getElementById(ids.name);
-            const ageEl = document.getElementById(ids.age);
-            const relEl = document.getElementById(ids.rel);
-            if (nameEl && nameEl.value.trim() !== '') {
-              const relText = (relEl && relEl.selectedIndex >= 0) ? relEl.options[relEl.selectedIndex].text : '';
-              compParts.push(i + '人目：' + nameEl.value.trim() + '（' + (ageEl ? ageEl.value : '') + '歳・' + relText + '）');
-            }
+        // 3人目以降の同行者（GASの同行者列は2人目までのため専用パラメータで送る）
+        const extraCompanions = [];
+        for (let i = 3; i <= nParticipants; i++) {
+          const ids = COMPANION_IDS[i];
+          const nameEl = document.getElementById(ids.name);
+          const ageEl = document.getElementById(ids.age);
+          const relEl = document.getElementById(ids.rel);
+          if (nameEl && nameEl.value.trim() !== '') {
+            const relText = (relEl && relEl.selectedIndex >= 0) ? relEl.options[relEl.selectedIndex].text : '';
+            extraCompanions.push(i + '人目：' + nameEl.value.trim() + '（' + (ageEl ? ageEl.value : '') + '歳・' + relText + '）');
           }
-          if (compParts.length > 0) {
-            inquiryLines.push('【バスツアー同行者】' + compParts.join('／'));
-          }
-        }
-
-        const userInquiry = document.getElementById('inquiry').value.trim();
-        if (userInquiry !== '') {
-          inquiryLines.push('【ご質問・ご要望】' + userInquiry);
         }
 
         const formData = {
@@ -448,17 +431,16 @@ document.addEventListener('DOMContentLoaded', () => {
           phone: phoneInput.value.trim(),
           address: addressInput.value.trim(),
           participants: participantsSelect ? participantsSelect.value : '1',
-          // GAS側(doPost)が "adult"/"child"/"none" のコード値を日本語に変換する実装のため、
-          // 必ずコード値を送ること。第2回は食事手配なし＝none固定。
-          meal_type_1: 'none',
-          allergy_check: 'no',
-          allergy_detail: '',
-          course: courseSelect.options[courseSelect.selectedIndex].text + '｜' +
-            courseOrder.map((v, i) => RANK_LABELS[i] + '：' + v).join('／'),
-          inquiry: inquiryLines.join('\n')
+          course: courseSelect.options[courseSelect.selectedIndex].text,
+          course_wish_1: courseOrder[0] || '',
+          course_wish_2: courseOrder[1] || '',
+          course_wish_3: courseOrder[2] || '',
+          children: kidsParts.join('／'),
+          companions_extra: extraCompanions.join('／'),
+          inquiry: document.getElementById('inquiry').value.trim()
         };
 
-        // 同行者（2人目）はGASの専用列に格納する
+        // 同行者（2人目）はGASの専用列（I〜K列）に格納する
         if (nParticipants >= 2) {
           const nameEl = document.getElementById(COMPANION_IDS[2].name);
           const ageEl = document.getElementById(COMPANION_IDS[2].age);
@@ -467,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.companionName = nameEl.value.trim();
             formData.companionAge = ageEl.value.trim();
             formData.companionRelationship = relEl.selectedIndex >= 0 ? relEl.options[relEl.selectedIndex].text : '';
-            formData.meal_type_2 = 'none';
           }
         }
 
