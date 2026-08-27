@@ -1,7 +1,7 @@
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwRqmI1_GBfy4Nw-hOaZhFP9BHZOw3O5ALvrXNwZNk2BqwZYKZFOPaYYh1qBoAMTgI4/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
-  
+
   // 1. Header Scroll Effect
   const header = document.querySelector('.header');
   window.addEventListener('scroll', () => {
@@ -37,93 +37,194 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-
   // 4. Accordion (Terms & Privacy Policies)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
       const item = header.parentElement;
       const isActive = item.classList.contains('active');
-      
+
       // Close all accordion items
       document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
-      
+
       if (!isActive) {
         item.classList.add('active');
       }
     });
   });
 
-  // 5. Booking Form Validation & Submission
+  // 5. Booking Form
   const form = document.getElementById('bookingForm');
   const modal = document.getElementById('successModal');
   const modalClose = document.getElementById('modalCloseBtn');
   const participantsSelect = document.getElementById('participants');
-  const companionWrapper = document.getElementById('companion_info_wrapper');
-  const mealType2Wrapper = document.getElementById('meal_type_2_wrapper');
-  const allergyNoRadio = document.getElementById('allergy_no');
-  const allergyYesRadio = document.getElementById('allergy_yes');
-  const allergyDetailWrapper = document.getElementById('allergy_detail_wrapper');
-  const allergyDetailInput = document.getElementById('allergy_detail');
+  const childrenCountSelect = document.getElementById('children_count');
 
-  // Toggle Companion Info & Meal wrapper based on number of participants
-  if (participantsSelect && companionWrapper) {
-    participantsSelect.addEventListener('change', () => {
-      if (participantsSelect.value === '2') {
-        companionWrapper.style.display = 'block';
-        if (mealType2Wrapper) mealType2Wrapper.style.display = 'block';
-      } else {
-        companionWrapper.style.display = 'none';
-        if (mealType2Wrapper) mealType2Wrapper.style.display = 'none';
-        // Clear companion inputs when switching back to 1 participant
-        const companionName = document.getElementById('companion_name');
-        const companionAge = document.getElementById('companion_age');
-        const companionRel = document.getElementById('companion_relationship');
-        const mealType2Select = document.getElementById('meal_type_2');
-        if (companionName) {
-          companionName.value = '';
-          clearError(companionName);
-        }
-        if (companionAge) {
-          companionAge.value = '';
-          clearError(companionAge);
-        }
-        if (companionRel) {
-          companionRel.value = '';
-          clearError(companionRel);
-        }
-        if (mealType2Select) {
-          mealType2Select.value = '';
-          clearError(mealType2Select);
-        }
+  const RANK_LABELS = ['第1希望', '第2希望', '第3希望'];
+  const GRADE_LABELS = {
+    '1': '小学1年生', '2': '小学2年生', '3': '小学3年生',
+    '4': '小学4年生', '5': '小学5年生', '6': '小学6年生',
+    '7': '中学1年生', '8': '中学2年生', '9': '中学3年生'
+  };
+  // 2人目はGAS側に専用列があるため既存のid（companion_*）を維持している
+  const COMPANION_IDS = {
+    2: { name: 'companion_name', age: 'companion_age', rel: 'companion_relationship' },
+    3: { name: 'companion3_name', age: 'companion3_age', rel: 'companion3_relationship' },
+    4: { name: 'companion4_name', age: 'companion4_age', rel: 'companion4_relationship' }
+  };
+
+  function participantsCount() {
+    return participantsSelect ? parseInt(participantsSelect.value, 10) || 1 : 1;
+  }
+
+  function childrenCount() {
+    return childrenCountSelect ? parseInt(childrenCountSelect.value, 10) || 1 : 1;
+  }
+
+  // --- 同行者ブロック（2〜4人目）の表示制御 ---
+  function updateCompanionBlocks() {
+    const n = participantsCount();
+    [2, 3, 4].forEach((i) => {
+      const block = document.getElementById('companion_block_' + i);
+      if (!block) return;
+      const show = n >= i;
+      block.style.display = show ? 'block' : 'none';
+      if (!show) {
+        const ids = COMPANION_IDS[i];
+        [ids.name, ids.age, ids.rel].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = '';
+            clearError(el);
+          }
+        });
       }
     });
   }
-
-  // Toggle Allergy Detail based on radio selection
-  if (allergyNoRadio && allergyYesRadio && allergyDetailWrapper) {
-    const handleAllergyToggle = () => {
-      if (allergyYesRadio.checked) {
-        allergyDetailWrapper.style.display = 'block';
-      } else {
-        allergyDetailWrapper.style.display = 'none';
-        if (allergyDetailInput) {
-          allergyDetailInput.value = '';
-          clearError(allergyDetailInput);
-        }
-      }
-    };
-    allergyNoRadio.addEventListener('change', handleAllergyToggle);
-    allergyYesRadio.addEventListener('change', handleAllergyToggle);
+  if (participantsSelect) {
+    participantsSelect.addEventListener('change', updateCompanionBlocks);
   }
-  
+
+  // --- お子様ブロック（1〜3人）の表示制御 ---
+  function updateChildBlocks() {
+    const n = childrenCount();
+    [2, 3].forEach((i) => {
+      const block = document.getElementById('child_block_' + i);
+      if (!block) return;
+      const show = n >= i;
+      block.style.display = show ? 'block' : 'none';
+      if (!show) {
+        const nameEl = document.getElementById('child' + i + '_name');
+        const gradeEl = document.getElementById('child' + i + '_grade');
+        if (nameEl) { nameEl.value = ''; clearError(nameEl); }
+        if (gradeEl) { gradeEl.value = ''; clearError(gradeEl); }
+      }
+    });
+    updateCourseEligibility();
+  }
+  if (childrenCountSelect) {
+    childrenCountSelect.addEventListener('change', updateChildBlocks);
+  }
+
+  // --- コース選択（チェック順＝希望順・最大3つ・対象学年フィルタ） ---
+  const courseChecks = Array.from(document.querySelectorAll('.course-check'));
+  const courseSummary = document.getElementById('courseSummary');
+  const courseGroup = document.getElementById('course_group');
+  const courseError = document.getElementById('courseError');
+  let courseOrder = []; // チェックした順のコース名（先頭が第1希望）
+
+  function selectedGrades() {
+    const grades = [];
+    const n = childrenCount();
+    for (let i = 1; i <= n; i++) {
+      const el = document.getElementById('child' + i + '_grade');
+      if (el && el.value !== '') grades.push(parseInt(el.value, 10));
+    }
+    return grades;
+  }
+
+  function setCourseError(message) {
+    if (!courseGroup || !courseError) return;
+    if (message) {
+      courseGroup.classList.add('has-error');
+      courseError.textContent = message;
+    } else {
+      courseGroup.classList.remove('has-error');
+      courseError.textContent = '';
+    }
+  }
+
+  function refreshCourseRanks() {
+    courseChecks.forEach((cb) => {
+      const option = cb.closest('.course-option');
+      if (!option) return;
+      const rankEl = option.querySelector('.course-rank');
+      const idx = courseOrder.indexOf(cb.value);
+      if (rankEl) rankEl.textContent = idx >= 0 ? RANK_LABELS[idx] : '';
+      option.classList.toggle('is-selected', idx >= 0);
+    });
+    if (courseSummary) {
+      if (courseOrder.length === 0) {
+        courseSummary.classList.remove('active');
+        courseSummary.textContent = '';
+      } else {
+        courseSummary.classList.add('active');
+        courseSummary.textContent = 'あなたの選択 ▶ ' + courseOrder.map((v, i) => RANK_LABELS[i] + '：' + v).join(' ／ ');
+      }
+    }
+  }
+
+  // お子様の学年に合わないコースは選択不可にする（学年未選択のうちは全コース選択可）
+  function updateCourseEligibility() {
+    const grades = selectedGrades();
+    courseChecks.forEach((cb) => {
+      const option = cb.closest('.course-option');
+      if (!option) return;
+      const min = parseInt(option.dataset.min, 10);
+      const max = parseInt(option.dataset.max, 10);
+      const eligible = grades.length === 0 || grades.some((g) => g >= min && g <= max);
+      option.classList.toggle('is-ineligible', !eligible);
+      cb.disabled = !eligible;
+      if (!eligible && cb.checked) {
+        cb.checked = false;
+        courseOrder = courseOrder.filter((v) => v !== cb.value);
+      }
+    });
+    refreshCourseRanks();
+  }
+
+  courseChecks.forEach((cb) => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        if (courseOrder.length >= 3) {
+          cb.checked = false;
+          setCourseError('選択できるのは第3希望（3つ）までです。変更する場合は、先にチェックを1つ外してください。');
+          return;
+        }
+        courseOrder.push(cb.value);
+        setCourseError('');
+      } else {
+        courseOrder = courseOrder.filter((v) => v !== cb.value);
+        if (courseOrder.length > 0) setCourseError('');
+      }
+      refreshCourseRanks();
+    });
+  });
+
+  document.querySelectorAll('.child-grade').forEach((sel) => {
+    sel.addEventListener('change', () => {
+      if (sel.value !== '') clearError(sel);
+      updateCourseEligibility();
+    });
+  });
+
+  // --- 送信処理 ---
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      
+
       let isValid = true;
-      
+
       // Validate Name
       const nameInput = document.getElementById('name');
       if (nameInput.value.trim() === '') {
@@ -132,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(nameInput);
       }
-      
+
       // Validate Age
       const ageInput = document.getElementById('age');
       if (ageInput.value.trim() === '') {
@@ -144,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(ageInput);
       }
-      
+
       // Validate Email
       const emailInput = document.getElementById('email');
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -157,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(emailInput);
       }
-      
+
       // Validate Phone
       const phoneInput = document.getElementById('phone');
       const phonePattern = /^[0-9-]{10,13}$/;
@@ -170,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(phoneInput);
       }
-      
+
       // Validate Address
       const addressInput = document.getElementById('address');
       if (addressInput.value.trim() === '') {
@@ -179,74 +280,78 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(addressInput);
       }
-      
-      // Validate Companion Info (Only when 2 participants are selected)
-      const companionNameInput = document.getElementById('companion_name');
-      const companionAgeInput = document.getElementById('companion_age');
-      const companionRelSelect = document.getElementById('companion_relationship');
 
-      if (participantsSelect && participantsSelect.value === '2') {
-        if (companionNameInput && companionNameInput.value.trim() === '') {
-          showError(companionNameInput, '同行者様のお名前を入力してください。');
-          isValid = false;
-        } else if (companionNameInput) {
-          clearError(companionNameInput);
-        }
+      // Validate Companions（表示中のブロックのみ）
+      const nParticipants = participantsCount();
+      for (let i = 2; i <= 4; i++) {
+        if (nParticipants < i) continue;
+        const ids = COMPANION_IDS[i];
+        const nameEl = document.getElementById(ids.name);
+        const ageEl = document.getElementById(ids.age);
+        const relEl = document.getElementById(ids.rel);
 
-        if (companionAgeInput) {
-          if (companionAgeInput.value.trim() === '') {
-            showError(companionAgeInput, '同行者様の年齢を入力してください。');
-            isValid = false;
-          } else if (isNaN(companionAgeInput.value) || parseInt(companionAgeInput.value) <= 0) {
-            showError(companionAgeInput, '正しい年齢を入力してください。');
+        if (nameEl) {
+          if (nameEl.value.trim() === '') {
+            showError(nameEl, '同行者様のお名前を入力してください。');
             isValid = false;
           } else {
-            clearError(companionAgeInput);
+            clearError(nameEl);
           }
         }
-
-        if (companionRelSelect && companionRelSelect.value === '') {
-          showError(companionRelSelect, '代表者様との関係を選択してください。');
-          isValid = false;
-        } else if (companionRelSelect) {
-          clearError(companionRelSelect);
+        if (ageEl) {
+          // 未就学児（0歳）も同行できるため0を許容する
+          if (ageEl.value.trim() === '') {
+            showError(ageEl, '同行者様の年齢を入力してください。');
+            isValid = false;
+          } else if (isNaN(ageEl.value) || parseInt(ageEl.value) < 0) {
+            showError(ageEl, '正しい年齢を入力してください。');
+            isValid = false;
+          } else {
+            clearError(ageEl);
+          }
+        }
+        if (relEl) {
+          if (relEl.value === '') {
+            showError(relEl, '代表者様との関係を選択してください。');
+            isValid = false;
+          } else {
+            clearError(relEl);
+          }
         }
       }
-      
-      // Validate Meal Selection
-      const mealType1Select = document.getElementById('meal_type_1');
-      const mealType2Select = document.getElementById('meal_type_2');
-      if (mealType1Select && mealType1Select.value === '') {
-        showError(mealType1Select, '代表者様のお食事のご希望を選択してください。');
+
+      // Validate Children（表示中のブロックのみ）
+      const nChildren = childrenCount();
+      for (let i = 1; i <= nChildren; i++) {
+        const nameEl = document.getElementById('child' + i + '_name');
+        const gradeEl = document.getElementById('child' + i + '_grade');
+        if (nameEl) {
+          if (nameEl.value.trim() === '') {
+            showError(nameEl, 'お子様のお名前を入力してください。');
+            isValid = false;
+          } else {
+            clearError(nameEl);
+          }
+        }
+        if (gradeEl) {
+          if (gradeEl.value === '') {
+            showError(gradeEl, 'お子様の学年を選択してください。');
+            isValid = false;
+          } else {
+            clearError(gradeEl);
+          }
+        }
+      }
+
+      // Validate Course Wishes
+      if (courseOrder.length === 0) {
+        setCourseError('参加を希望するコースを1つ以上選択してください（第3希望までの選択をおすすめします）。');
         isValid = false;
-      } else if (mealType1Select) {
-        clearError(mealType1Select);
+      } else {
+        setCourseError('');
       }
 
-      if (participantsSelect && participantsSelect.value === '2' && mealType2Select) {
-        if (mealType2Select.value === '') {
-          showError(mealType2Select, '同行者様のお食事のご希望を選択してください。');
-          isValid = false;
-        } else {
-          clearError(mealType2Select);
-        }
-      }
-
-      // Validate Allergy Detail
-      const allergyYesRadio = document.getElementById('allergy_yes');
-      const allergyDetailInput = document.getElementById('allergy_detail');
-      if (allergyYesRadio && allergyYesRadio.checked && allergyDetailInput) {
-        if (allergyDetailInput.value.trim() === '') {
-          showError(allergyDetailInput, 'アレルギーの詳細を入力してください。');
-          isValid = false;
-        } else {
-          clearError(allergyDetailInput);
-        }
-      } else if (allergyDetailInput) {
-        clearError(allergyDetailInput);
-      }
-
-      // Validate Course Selection
+      // Validate Tour Selection
       const courseSelect = document.getElementById('tour_course');
       if (courseSelect.value === '') {
         showError(courseSelect, '参加希望ツアーを選択してください。');
@@ -254,16 +359,24 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(courseSelect);
       }
-      
+
       // Validate Agreements
       const lunchAgree = document.getElementById('lunch_agree');
+      const courseAgree = document.getElementById('course_agree');
       const privacyAgree = document.getElementById('privacy_agree');
-      
+
       if (!lunchAgree.checked) {
-        showError(lunchAgree, '飲食費が自己負担であることへの同意が必要です。');
+        showError(lunchAgree, '昼食・飲み物が各自持参（自己負担）であることへの同意が必要です。');
         isValid = false;
       } else {
         clearError(lunchAgree);
+      }
+
+      if (courseAgree && !courseAgree.checked) {
+        showError(courseAgree, 'コースがご希望に添えない場合があることへの同意が必要です。');
+        isValid = false;
+      } else if (courseAgree) {
+        clearError(courseAgree);
       }
 
       if (!privacyAgree.checked) {
@@ -272,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearError(privacyAgree);
       }
-      
+
       if (isValid) {
         const errorSummary = document.getElementById('formErrorSummary');
         if (errorSummary) {
@@ -280,12 +393,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const submitButton = form.querySelector('.btn-submit');
         const originalButtonText = submitButton.textContent;
-        
+
         // 送信中の状態に変更（連打防止）
         submitButton.disabled = true;
         submitButton.textContent = '送信中...';
-        
-        // フォームデータの作成
+
+        /* --- GAS(doPost)互換の送信データを作成 ---
+           GAS側は第1回のフォーム項目（meal/allergy/companion1名分）を前提とした列構成のため、
+           第2回で増えた情報は既存パラメータに整形して格納する（GAS改修なしで受信できる）。
+           - コース希望（第1〜第3）      → course（文字列連結）
+           - 講座参加のお子様・3人目以降の同行者 → inquiry（先頭に整形テキストを付加）
+           - 食事・アレルギー（第2回は昼食持参で手配なし） → 固定値 none / no */
+        const inquiryLines = [];
+
+        const kidsParts = [];
+        for (let i = 1; i <= nChildren; i++) {
+          const nameEl = document.getElementById('child' + i + '_name');
+          const gradeEl = document.getElementById('child' + i + '_grade');
+          if (nameEl && gradeEl && nameEl.value.trim() !== '') {
+            kidsParts.push(i + '人目：' + nameEl.value.trim() + '（' + (GRADE_LABELS[gradeEl.value] || '学年未選択') + '）');
+          }
+        }
+        if (kidsParts.length > 0) {
+          inquiryLines.push('【講座に参加するお子様】' + kidsParts.join('／'));
+        }
+
+        // 3名以上の場合、GASの同行者列（1名分）に入りきらないため全同行者をテキスト化して残す
+        if (nParticipants >= 3) {
+          const compParts = [];
+          for (let i = 2; i <= nParticipants; i++) {
+            const ids = COMPANION_IDS[i];
+            const nameEl = document.getElementById(ids.name);
+            const ageEl = document.getElementById(ids.age);
+            const relEl = document.getElementById(ids.rel);
+            if (nameEl && nameEl.value.trim() !== '') {
+              const relText = (relEl && relEl.selectedIndex >= 0) ? relEl.options[relEl.selectedIndex].text : '';
+              compParts.push(i + '人目：' + nameEl.value.trim() + '（' + (ageEl ? ageEl.value : '') + '歳・' + relText + '）');
+            }
+          }
+          if (compParts.length > 0) {
+            inquiryLines.push('【バスツアー同行者】' + compParts.join('／'));
+          }
+        }
+
+        const userInquiry = document.getElementById('inquiry').value.trim();
+        if (userInquiry !== '') {
+          inquiryLines.push('【ご質問・ご要望】' + userInquiry);
+        }
+
         const formData = {
           name: nameInput.value.trim(),
           age: ageInput.value.trim(),
@@ -294,21 +449,26 @@ document.addEventListener('DOMContentLoaded', () => {
           address: addressInput.value.trim(),
           participants: participantsSelect ? participantsSelect.value : '1',
           // GAS側(doPost)が "adult"/"child"/"none" のコード値を日本語に変換する実装のため、
-          // ここでは必ず value（コード値）を送ること。表示テキストを送るとGASの判定に落ちて「不要」になる。
-          meal_type_1: mealType1Select ? mealType1Select.value : '',
-          allergy_check: (document.querySelector('input[name="allergy_check"]:checked') || {}).value || 'no',
-          allergy_detail: allergyDetailInput ? allergyDetailInput.value.trim() : '',
-          course: courseSelect.options[courseSelect.selectedIndex].text,
-          inquiry: document.getElementById('inquiry').value.trim()
+          // 必ずコード値を送ること。第2回は食事手配なし＝none固定。
+          meal_type_1: 'none',
+          allergy_check: 'no',
+          allergy_detail: '',
+          course: courseSelect.options[courseSelect.selectedIndex].text + '｜' +
+            courseOrder.map((v, i) => RANK_LABELS[i] + '：' + v).join('／'),
+          inquiry: inquiryLines.join('\n')
         };
 
-        // 同行者の情報を追加
-        if (formData.participants === '2' && companionNameInput && companionAgeInput && companionRelSelect) {
-          formData.companionName = companionNameInput.value.trim();
-          formData.companionAge = companionAgeInput.value.trim();
-          formData.companionRelationship = companionRelSelect.options[companionRelSelect.selectedIndex].text;
-          // 同上：GASがコード値を変換するため value を送る
-          formData.meal_type_2 = mealType2Select ? mealType2Select.value : '';
+        // 同行者（2人目）はGASの専用列に格納する
+        if (nParticipants >= 2) {
+          const nameEl = document.getElementById(COMPANION_IDS[2].name);
+          const ageEl = document.getElementById(COMPANION_IDS[2].age);
+          const relEl = document.getElementById(COMPANION_IDS[2].rel);
+          if (nameEl && ageEl && relEl) {
+            formData.companionName = nameEl.value.trim();
+            formData.companionAge = ageEl.value.trim();
+            formData.companionRelationship = relEl.selectedIndex >= 0 ? relEl.options[relEl.selectedIndex].text : '';
+            formData.meal_type_2 = 'none';
+          }
         }
 
         // URLSearchParams形式に変換（GASで受け取りやすいように）
@@ -343,9 +503,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // 成功モーダルの表示
             modal.classList.add('active');
             form.reset();
-            if (companionWrapper) {
-              companionWrapper.style.display = 'none';
-            }
+            courseOrder = [];
+            refreshCourseRanks();
+            updateCompanionBlocks();
+            updateChildBlocks();
           } else {
             console.error('GAS Error:', result.error);
             alert('お申し込みの送信に失敗しました。システムエラーが発生した可能性があります。お手数ですが、少し時間をおいてからやり直すか、お問い合わせ窓口まで直接ご連絡ください。');
@@ -376,14 +537,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  
-  /* --- リアルタイムバリデーション（2026-08-15 追加） ---
-     従来は送信ボタンを押すまでエラーが分からず、未入力が複数あると一度に大量のエラーが
-     出て離脱の原因になっていた。入力欄を離れた時点で1項目ずつ検証し、入力を再開したら
-     エラー表示を消す。判定ルールは上の submit ハンドラと完全に同一にすること。 */
+
+  /* --- リアルタイムバリデーション ---
+     入力欄を離れた時点で1項目ずつ検証し、入力を再開したらエラー表示を消す。
+     判定ルールは上の submit ハンドラと完全に同一にすること。 */
   if (form) {
     const emailPatternRT = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phonePatternRT = /^[0-9-]{10,13}$/;
+
+    const blockVisible = (blockId) => {
+      const block = document.getElementById(blockId);
+      return block && block.style.display !== 'none';
+    };
 
     const validators = {
       name: (el) => el.value.trim() === '' ? 'お名前を入力してください。' : null,
@@ -402,23 +567,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!phonePatternRT.test(el.value.replace(/-/g, ''))) return '有効な電話番号を入力してください。';
         return null;
       },
-      address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null,
-      companion_name: (el) => {
-        if (!participantsSelect || participantsSelect.value !== '2') return null;
-        return el.value.trim() === '' ? '同行者様のお名前を入力してください。' : null;
-      },
-      companion_age: (el) => {
-        if (!participantsSelect || participantsSelect.value !== '2') return null;
-        if (el.value.trim() === '') return '同行者様の年齢を入力してください。';
-        if (isNaN(el.value) || parseInt(el.value) <= 0) return '正しい年齢を入力してください。';
-        return null;
-      },
-      allergy_detail: (el) => {
-        const allergyYes = document.getElementById('allergy_yes');
-        if (!allergyYes || !allergyYes.checked) return null;
-        return el.value.trim() === '' ? 'アレルギーの詳細を入力してください。' : null;
-      }
+      address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null
     };
+
+    // 同行者（2〜4人目）：ブロックが表示されているときのみ検証
+    [2, 3, 4].forEach((i) => {
+      const ids = COMPANION_IDS[i];
+      validators[ids.name] = (el) => {
+        if (!blockVisible('companion_block_' + i)) return null;
+        return el.value.trim() === '' ? '同行者様のお名前を入力してください。' : null;
+      };
+      validators[ids.age] = (el) => {
+        if (!blockVisible('companion_block_' + i)) return null;
+        if (el.value.trim() === '') return '同行者様の年齢を入力してください。';
+        if (isNaN(el.value) || parseInt(el.value) < 0) return '正しい年齢を入力してください。';
+        return null;
+      };
+    });
+
+    // お子様（1〜3人目）：ブロックが表示されているときのみ検証
+    [1, 2, 3].forEach((i) => {
+      validators['child' + i + '_name'] = (el) => {
+        if (i > 1 && !blockVisible('child_block_' + i)) return null;
+        return el.value.trim() === '' ? 'お子様のお名前を入力してください。' : null;
+      };
+    });
 
     Object.keys(validators).forEach((id) => {
       const el = document.getElementById(id);
@@ -441,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // セレクトは選択された時点でエラーを解除
-    ['tour_course', 'companion_relationship', 'meal_type_1', 'meal_type_2'].forEach((id) => {
+    ['tour_course', 'companion_relationship', 'companion3_relationship', 'companion4_relationship'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {
@@ -450,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 同意チェックはチェックされた時点でエラーを解除
-    ['lunch_agree', 'privacy_agree'].forEach((id) => {
+    ['lunch_agree', 'course_agree', 'privacy_agree'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {
@@ -463,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalClose.addEventListener('click', () => {
       modal.classList.remove('active');
     });
-    
+
     // Close modal when clicking outside content
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
@@ -471,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  
+
   function showError(inputElement, message) {
     // Check if checkbox
     let formGroup;
@@ -480,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       formGroup = inputElement.parentElement;
     }
-    
+
     formGroup.classList.add('has-error');
     let errorMsg = formGroup.querySelector('.form-error-msg');
     if (!errorMsg) {
@@ -496,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     errorMsg.textContent = message;
   }
-  
+
   function clearError(inputElement) {
     let formGroup;
     if (inputElement.type === 'checkbox') {
