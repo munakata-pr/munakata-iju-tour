@@ -2035,6 +2035,16 @@ h5 {
   cursor: pointer;
 }
 
+.course-thumb {
+  width: 76px;
+  height: 64px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 6px;
+  background-color: var(--border-light);
+  margin-top: 2px;
+}
+
 .course-info {
   display: flex;
   flex-direction: column;
@@ -2139,6 +2149,11 @@ h5 {
 
   .course-list {
     grid-template-columns: 1fr;
+  }
+
+  .course-thumb {
+    width: 64px;
+    height: 54px;
   }
 }
 
