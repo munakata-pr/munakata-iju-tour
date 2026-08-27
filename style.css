@@ -2048,6 +2048,18 @@ h5 {
   line-height: 1.5;
 }
 
+.course-desc {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+}
+
+.course-provider {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
 .course-meta {
   display: flex;
   align-items: center;
