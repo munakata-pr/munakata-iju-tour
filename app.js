@@ -360,6 +360,15 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(courseSelect);
       }
 
+      // Validate Car Count
+      const carCountSelect = document.getElementById('car_count');
+      if (carCountSelect && carCountSelect.value === '') {
+        showError(carCountSelect, '当日お越しになるお車の台数を選択してください。');
+        isValid = false;
+      } else if (carCountSelect) {
+        clearError(carCountSelect);
+      }
+
       // Validate Agreements
       const lunchAgree = document.getElementById('lunch_agree');
       const courseAgree = document.getElementById('course_agree');
@@ -386,6 +395,14 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(privacyAgree);
       }
 
+      const kidsUnivMediaAgree = document.getElementById('kids_univ_media_agree');
+      if (kidsUnivMediaAgree && !kidsUnivMediaAgree.checked) {
+        showError(kidsUnivMediaAgree, 'むなかた子ども大学での写真・映像等の使用と個人情報の取扱いへの同意が必要です。');
+        isValid = false;
+      } else if (kidsUnivMediaAgree) {
+        clearError(kidsUnivMediaAgree);
+      }
+
       if (isValid) {
         const errorSummary = document.getElementById('formErrorSummary');
         if (errorSummary) {
@@ -401,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         /* --- GAS(doPost)への送信データを作成 ---
            2026-08-27 のGAS改修で、コース希望・講座参加のお子様・3人目以降の同行者は
            それぞれ専用パラメータ（専用列 Q〜U）に入る。inquiry は利用者が書いた本文のみを送る。
-           第2回は昼食持参のため meal_type_* / allergy_* は送らない（GAS側は未送信を空欄として扱う）。 */
+           今回（11/3開催分）は昼食の事前選択がないため meal_type_* / allergy_* は送らない（GAS側は未送信を空欄として扱う）。 */
         const kidsParts = [];
         for (let i = 1; i <= nChildren; i++) {
           const nameEl = document.getElementById('child' + i + '_name');
@@ -437,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
           course_wish_3: courseOrder[2] || '',
           children: kidsParts.join('／'),
           companions_extra: extraCompanions.join('／'),
+          car_count: carCountSelect ? carCountSelect.value : '',
           inquiry: document.getElementById('inquiry').value.trim()
         };
 
@@ -604,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 同意チェックはチェックされた時点でエラーを解除
-    ['lunch_agree', 'course_agree', 'privacy_agree'].forEach((id) => {
+    ['lunch_agree', 'course_agree', 'privacy_agree', 'kids_univ_media_agree'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {

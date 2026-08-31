@@ -2105,6 +2105,11 @@ h5 {
   background-color: rgba(251, 191, 36, 0.18);
 }
 
+.course-visit.pending {
+  color: #6b7280;
+  background-color: rgba(107, 114, 128, 0.12);
+}
+
 .course-cap {
   font-size: 1.2rem;
   color: var(--text-light);
