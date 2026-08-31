@@ -369,6 +369,15 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(carCountSelect);
       }
 
+      // Validate Bento Count
+      const bentoCountSelect = document.getElementById('bento_count');
+      if (bentoCountSelect && bentoCountSelect.value === '') {
+        showError(bentoCountSelect, 'お弁当の注文の有無を選択してください。');
+        isValid = false;
+      } else if (bentoCountSelect) {
+        clearError(bentoCountSelect);
+      }
+
       // Validate Agreements
       const lunchAgree = document.getElementById('lunch_agree');
       const courseAgree = document.getElementById('course_agree');
@@ -455,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
           children: kidsParts.join('／'),
           companions_extra: extraCompanions.join('／'),
           car_count: carCountSelect ? carCountSelect.value : '',
+          bento_count: bentoCountSelect ? bentoCountSelect.value : '',
           inquiry: document.getElementById('inquiry').value.trim()
         };
 
