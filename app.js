@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (courseAgree && !courseAgree.checked) {
-        showError(courseAgree, 'コースがご希望に添えない場合があることへの同意が必要です。');
+        showError(courseAgree, '第1希望以外のコースになる場合があることへの同意が必要です。');
         isValid = false;
       } else if (courseAgree) {
         clearError(courseAgree);
