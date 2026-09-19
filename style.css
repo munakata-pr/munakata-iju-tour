@@ -2198,3 +2198,59 @@ h5 {
     font-size: 1.3rem;
   }
 }
+
+/* =========================================================================
+   2026-09-19 スマホ ヘッダー修正（実測：375px でロゴ文字がCTAに 44px 重なり、320px で 99px）
+   原因＝上の「中折れ防止」の nowrap が全幅に効き、.logo-main が flex コンテナから溢れていた。
+   600px 以下は「宗像市」<wbr>「暮らし体感バスツアー」の2行折返しを許可する。
+   ========================================================================= */
+@media (max-width: 600px) {
+  .header-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .logo-text {
+    min-width: 0; /* flex子の min-width:auto で溢れるのを防ぐ */
+  }
+
+  .logo-main {
+    white-space: normal;
+    word-break: keep-all;    /* 語中改行はしない（<wbr> 位置でのみ折返す） */
+    overflow-wrap: anywhere; /* 極小幅での保険 */
+    line-height: 1.3;
+  }
+
+  .menu-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    margin-right: -6px; /* 44px の当たり判定を右余白側に食い込ませ、ロゴ文字の幅を確保 */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-cta {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* minmax(320px, 1fr) が 360px 以下で横はみ出しを起こすため 1 列固定 */
+  .tours-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 360px 以下は CTA を「申込む」に短縮（追従CTAと同じ文言） */
+@media (max-width: 360px) {
+  .header-cta-long {
+    display: none;
+  }
+}
+
+/* コース一覧のバッジ・実施団体：11〜11.5px → 12px（可読性の下限） */
+.course-grade,
+.course-provider,
+.course-visit {
+  font-size: 1.2rem;
+}
