@@ -2254,3 +2254,47 @@ h5 {
 .course-visit {
   font-size: 1.2rem;
 }
+
+/* =========================================================================
+   申込フォーム改修（2026-10-05）: エラー・通知を操作した場所の近くに出す
+   ========================================================================= */
+/* コース未選択のエラーは一覧の上に枠付きで出す（一覧の下だと17コース分の下に埋もれていた） */
+#courseError {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  background-color: #fef2f2;
+  border: 1px solid var(--danger-strong);
+  border-radius: var(--radius-sm);
+  color: var(--danger-strong);
+  line-height: 1.6;
+}
+
+/* 学年変更で外れたコース・4つ目の選択の通知（app.js が操作した要素の直下に差し込む） */
+.course-notice {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background-color: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-left-width: 4px;
+  border-radius: var(--radius-sm);
+  color: #78350f;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.7;
+  scroll-margin: 96px 0 16px;
+}
+
+/* コース一覧（グリッド）内では1行ぶち抜きにし、PC2列表示で右隣のコースが下にずれないよう dense で詰める */
+.course-list {
+  grid-auto-flow: dense;
+}
+
+.course-list > .course-notice {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+/* 同意チェックのエラーは項目ごとに、チェックボックスの右の文頭に揃えて出す（18px＋gap 10px） */
+.checkbox-item .form-error-msg {
+  margin: 4px 0 0 28px;
+}

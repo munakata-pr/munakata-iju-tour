@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalClose = document.getElementById('modalCloseBtn');
   const participantsSelect = document.getElementById('participants');
   const childrenCountSelect = document.getElementById('children_count');
+  const childrenWrapper = document.getElementById('children_wrapper');
+  const childrenZeroNote = document.getElementById('childrenZeroNote');
 
   const RANK_LABELS = ['第1希望', '第2希望', '第3希望'];
   const GRADE_LABELS = {
@@ -77,8 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return participantsSelect ? parseInt(participantsSelect.value, 10) || 1 : 1;
   }
 
+  // 0 = 講座に参加するお子様なし（未就学児のみのご家庭）。`|| 1` で0が1に化けないよう NaN のときだけ既定値にする
   function childrenCount() {
-    return childrenCountSelect ? parseInt(childrenCountSelect.value, 10) || 1 : 1;
+    if (!childrenCountSelect) return 1;
+    const n = parseInt(childrenCountSelect.value, 10);
+    return Number.isNaN(n) ? 1 : n;
+  }
+
+  // 電話番号の表記ゆれを吸収する（全角数字→半角、ハイフン類・長音・スペース・括弧を除去）
+  const PHONE_PATTERN = /^[0-9]{10,13}$/;
+  function normalizePhone(value) {
+    return value
+      .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+      .replace(/[\s　\-‐‑‒–—―−－ーｰ()（）]/g, '');
   }
 
   // --- 同行者ブロック（2〜4人目）の表示制御 ---
@@ -105,10 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
     participantsSelect.addEventListener('change', updateCompanionBlocks);
   }
 
-  // --- お子様ブロック（1〜3人）の表示制御 ---
+  // --- お子様ブロック（0〜3人）の表示制御 ---
   function updateChildBlocks() {
+    hideCourseNotice();
     const n = childrenCount();
-    [2, 3].forEach((i) => {
+    [1, 2, 3].forEach((i) => {
       const block = document.getElementById('child_block_' + i);
       if (!block) return;
       const show = n >= i;
@@ -120,7 +134,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gradeEl) { gradeEl.value = ''; clearError(gradeEl); }
       }
     });
-    updateCourseEligibility();
+    // 0人（未就学児のみ）のときは、お子様の入力欄とコース選択をまとめて隠し、選択済みのコースも外す
+    const none = n === 0;
+    if (childrenWrapper) childrenWrapper.style.display = none ? 'none' : 'block';
+    if (courseGroup) courseGroup.style.display = none ? 'none' : 'block';
+    if (childrenZeroNote) childrenZeroNote.style.display = none ? 'block' : 'none';
+    // コースを選ばないため「第1希望以外のコースになる場合がある」への同意も不要（写真・映像の同意は会場で保護者・乳幼児も写り得るため残す）
+    const courseAgree = document.getElementById('course_agree');
+    const courseAgreeItem = courseAgree ? courseAgree.closest('.checkbox-item') : null;
+    if (courseAgreeItem) courseAgreeItem.style.display = none ? 'none' : 'block';
+    if (none && courseAgree) {
+      courseAgree.checked = false;
+      clearError(courseAgree);
+    }
+    if (none) {
+      courseChecks.forEach((cb) => { cb.checked = false; });
+      courseOrder = [];
+      setCourseError('');
+    }
+    const removed = updateCourseEligibility();
+    // 2人目・3人目の欄を閉じたことで対象外になったコースがあれば、人数欄の下で知らせる
+    if (removed.length > 0 && childrenCountSelect) {
+      showCourseNotice(childrenCountSelect.closest('.form-group'), 'beforeend', removedCoursesMessage('お子様の人数を変更したため', removed));
+    }
   }
   if (childrenCountSelect) {
     childrenCountSelect.addEventListener('change', updateChildBlocks);
@@ -154,6 +190,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* 学年変更で外れたコース・4つ目の選択の通知は、操作した場所の直下に差し込む
+     （courseError はコース欄の端にあり、375px幅ではコース欄が約4,800pxあるため画面外で気づけなかった） */
+  const courseNotice = document.createElement('div');
+  courseNotice.className = 'course-notice';
+  courseNotice.setAttribute('role', 'status');
+
+  function showCourseNotice(anchor, position, message) {
+    if (!anchor) return;
+    courseNotice.textContent = message;
+    anchor.insertAdjacentElement(position, courseNotice);
+    courseNotice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideCourseNotice() {
+    courseNotice.remove();
+  }
+
+  function currentCoursesText() {
+    if (courseOrder.length === 0) return '現在選択中のコースはありません。コース一覧から選び直してください。';
+    return '現在の選択：' + courseOrder.map((v, i) => RANK_LABELS[i] + ' ' + v).join('／');
+  }
+
+  function removedCoursesMessage(reason, removed) {
+    return reason + '、対象学年外になった' + removed.join('、') + 'のチェックを外しました。' + currentCoursesText();
+  }
+
   function refreshCourseRanks() {
     courseChecks.forEach((cb) => {
       const option = cb.closest('.course-option');
@@ -175,8 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // お子様の学年に合わないコースは選択不可にする（学年未選択のうちは全コース選択可）
+  // 戻り値：チェックを外したコース（「コース名」（第n希望）の形。通知文に使う）
   function updateCourseEligibility() {
     const grades = selectedGrades();
+    const before = courseOrder.slice();
+    const removed = [];
     courseChecks.forEach((cb) => {
       const option = cb.closest('.course-option');
       if (!option) return;
@@ -187,18 +252,22 @@ document.addEventListener('DOMContentLoaded', () => {
       cb.disabled = !eligible;
       if (!eligible && cb.checked) {
         cb.checked = false;
+        removed.push('「' + cb.value + '」（' + RANK_LABELS[before.indexOf(cb.value)] + '）');
         courseOrder = courseOrder.filter((v) => v !== cb.value);
       }
     });
     refreshCourseRanks();
+    return removed;
   }
 
   courseChecks.forEach((cb) => {
     cb.addEventListener('change', () => {
+      hideCourseNotice();
       if (cb.checked) {
         if (courseOrder.length >= 3) {
           cb.checked = false;
-          setCourseError('選択できるのは第3希望（3つ）までです。変更する場合は、先にチェックを1つ外してください。');
+          showCourseNotice(cb.closest('.course-option'), 'afterend',
+            '選択できるのは第3希望（3つ）までです。変更する場合は、先にチェックを1つ外してください。' + currentCoursesText());
           return;
         }
         courseOrder.push(cb.value);
@@ -213,8 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.child-grade').forEach((sel) => {
     sel.addEventListener('change', () => {
+      hideCourseNotice();
       if (sel.value !== '') clearError(sel);
-      updateCourseEligibility();
+      const removed = updateCourseEligibility();
+      if (removed.length > 0) {
+        showCourseNotice(sel.closest('.child-block'), 'afterend', removedCoursesMessage('学年を変更したため', removed));
+      }
     });
   });
 
@@ -261,11 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Validate Phone
       const phoneInput = document.getElementById('phone');
-      const phonePattern = /^[0-9-]{10,13}$/;
-      if (phoneInput.value.trim() === '') {
+      phoneInput.value = normalizePhone(phoneInput.value);
+      if (phoneInput.value === '') {
         showError(phoneInput, '電話番号を入力してください。');
         isValid = false;
-      } else if (!phonePattern.test(phoneInput.value.replace(/-/g, ''))) {
+      } else if (!PHONE_PATTERN.test(phoneInput.value)) {
         showError(phoneInput, '有効な電話番号を入力してください。');
         isValid = false;
       } else {
@@ -343,8 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Validate Course Wishes
-      if (courseOrder.length === 0) {
+      // Validate Course Wishes（講座に参加するお子様が0人のときは不要）
+      if (nChildren > 0 && courseOrder.length === 0) {
         setCourseError('参加を希望するコースを1つ以上選択してください（第3希望までの選択をおすすめします）。');
         isValid = false;
       } else {
@@ -390,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(lunchAgree);
       }
 
-      if (courseAgree && !courseAgree.checked) {
+      if (courseAgree && nChildren > 0 && !courseAgree.checked) {
         showError(courseAgree, '第1希望以外のコースになる場合があることへの同意が必要です。');
         isValid = false;
       } else if (courseAgree) {
@@ -461,7 +534,8 @@ document.addEventListener('DOMContentLoaded', () => {
           course_wish_1: courseOrder[0] || '',
           course_wish_2: courseOrder[1] || '',
           course_wish_3: courseOrder[2] || '',
-          children: kidsParts.join('／'),
+          // 0人のときも空欄にせず明示する（シート・通知メールで「未入力」と区別するため）
+          children: nChildren === 0 ? '0人（未就学児のみ・講座への参加なし）' : kidsParts.join('／'),
           companions_extra: extraCompanions.join('／'),
           car_count: carCountSelect ? carCountSelect.value : '',
           bento_count: bentoCountSelect ? bentoCountSelect.value : '',
@@ -540,7 +614,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Scroll to the first error
         const firstError = document.querySelector('.has-error');
-        if (firstError) {
+        if (firstError === courseGroup && courseError) {
+          // コース欄は縦に長く（375px幅で約4,800px）中央寄せだとエラー文が画面外になるため、
+          // 一覧の上にあるエラー文を固定ヘッダーのすぐ下に合わせる
+          const top = courseError.getBoundingClientRect().top + window.scrollY - header.offsetHeight - 16;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        } else if (firstError) {
           firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
@@ -552,7 +631,6 @@ document.addEventListener('DOMContentLoaded', () => {
      判定ルールは上の submit ハンドラと完全に同一にすること。 */
   if (form) {
     const emailPatternRT = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phonePatternRT = /^[0-9-]{10,13}$/;
 
     const blockVisible = (blockId) => {
       const block = document.getElementById(blockId);
@@ -572,8 +650,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
       },
       phone: (el) => {
-        if (el.value.trim() === '') return '電話番号を入力してください。';
-        if (!phonePatternRT.test(el.value.replace(/-/g, ''))) return '有効な電話番号を入力してください。';
+        const v = normalizePhone(el.value);
+        if (v === '') return '電話番号を入力してください。';
+        if (!PHONE_PATTERN.test(v)) return '有効な電話番号を入力してください。';
         return null;
       },
       address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null
@@ -594,13 +673,21 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    // お子様（1〜3人目）：ブロックが表示されているときのみ検証
+    // お子様（1〜3人目）：選択した人数の欄のみ検証（0人のときは全欄対象外）
     [1, 2, 3].forEach((i) => {
       validators['child' + i + '_name'] = (el) => {
-        if (i > 1 && !blockVisible('child_block_' + i)) return null;
+        if (childrenCount() < i) return null;
         return el.value.trim() === '' ? 'お子様のお名前を入力してください。' : null;
       };
     });
+
+    // 電話番号は欄を離れた時点で半角数字だけに整えて表示する（下の検証より先に登録すること）
+    const phoneEl = document.getElementById('phone');
+    if (phoneEl) {
+      phoneEl.addEventListener('blur', () => {
+        phoneEl.value = normalizePhone(phoneEl.value);
+      });
+    }
 
     Object.keys(validators).forEach((id) => {
       const el = document.getElementById(id);
@@ -623,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // セレクトは選択された時点でエラーを解除
-    ['tour_course', 'companion_relationship', 'companion3_relationship', 'companion4_relationship'].forEach((id) => {
+    ['tour_course', 'car_count', 'bento_count', 'companion_relationship', 'companion3_relationship', 'companion4_relationship'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {
@@ -654,22 +741,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function showError(inputElement, message) {
-    // Check if checkbox
-    let formGroup;
+  // エラーを表示する枠。同意チェックは項目ごとの .checkbox-item に出す
+  // （4項目で1つの欄を共有していたため、文言が後の項目で上書きされ、1つ同意しただけで全体の赤表示が消えていた）
+  function errorContainer(inputElement) {
     if (inputElement.type === 'checkbox') {
-      formGroup = inputElement.closest('.form-group');
-    } else {
-      formGroup = inputElement.parentElement;
+      return inputElement.closest('.checkbox-item') || inputElement.closest('.form-group');
     }
+    return inputElement.parentElement;
+  }
 
+  function showError(inputElement, message) {
+    const formGroup = errorContainer(inputElement);
     formGroup.classList.add('has-error');
     let errorMsg = formGroup.querySelector('.form-error-msg');
     if (!errorMsg) {
       errorMsg = document.createElement('div');
       errorMsg.className = 'form-error-msg';
       // 補足注記（.form-note）の下に埋もれないよう、入力欄の直下に差し込む。
-      // チェックボックスは label に内包されているため従来どおり末尾に追加する。
+      // チェックボックスは label に内包されているため、項目の枠の末尾（label の後ろ）に追加する。
       if (inputElement.type === 'checkbox') {
         formGroup.appendChild(errorMsg);
       } else {
@@ -680,12 +769,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clearError(inputElement) {
-    let formGroup;
-    if (inputElement.type === 'checkbox') {
-      formGroup = inputElement.closest('.form-group');
-    } else {
-      formGroup = inputElement.parentElement;
-    }
-    formGroup.classList.remove('has-error');
+    errorContainer(inputElement).classList.remove('has-error');
   }
 });

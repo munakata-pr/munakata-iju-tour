@@ -109,7 +109,7 @@
   <link rel="preload" as="image" href="assets/hero_munakata.webp" type="image/webp" fetchpriority="high">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css?v=1.1.0">
+  <link rel="stylesheet" href="style.css?v=1.2.0">
   
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -698,11 +698,13 @@
           <div class="form-group">
             <label for="children_count" class="form-label">むなかた子ども大学の講座に参加するお子様の人数<span class="required">必須</span></label>
             <select id="children_count" class="form-control">
+              <option value="0">0人（未就学児のみ）</option>
               <option value="1" selected>1人</option>
               <option value="2">2人</option>
               <option value="3">3人</option>
             </select>
             <p class="form-note">※講座の対象は小学1年生〜中学3年生です。4人以上でのご参加をご希望の場合は事務局までご相談ください。</p>
+            <p class="form-note" id="childrenZeroNote" style="display: none;">※0人（未就学児のみ）の場合、お子様のお名前・学年、コースの選択、コースに関する同意は不要です。</p>
           </div>
 
           <div class="form-group" id="children_wrapper">
@@ -787,6 +789,7 @@
           <div class="form-group" id="course_group">
             <label class="form-label">参加を希望するコース（第1希望〜第3希望）<span class="required">必須</span></label>
             <p class="form-note" style="margin: 0 0 12px;">本ツアーから参加できる<strong>17コース</strong>の一覧です。<strong>チェックした順に第1希望→第2希望→第3希望</strong>となります（最大3つまで・第3希望までの選択をおすすめします）。<strong>10月23日(金)17:00までにお申し込みの方は、移住検討者枠として、お選びいただいた第3希望までのコースのいずれかにご参加いただけます。</strong>コース内容の詳細は<a href="https://munakata-kids-unv.jp/course/main-campus/" target="_blank" rel="noopener" style="color: var(--primary-color); text-decoration: underline;">むなかた子ども大学 公式サイト</a>をご確認ください。</p>
+            <div id="courseError" class="form-error-msg"></div>
             <div class="course-list" id="courseList">
               <label class="course-option" data-min="1" data-max="3">
                 <input type="checkbox" class="course-check" value="宅配に関わるお仕事コース">
@@ -977,7 +980,6 @@
               </label>
             </div>
             <div id="courseSummary" class="course-summary" aria-live="polite"></div>
-            <div id="courseError" class="form-error-msg"></div>
             <p class="form-note" style="margin-top: 12px;">
               ※定員は講座全体の定員です（本ツアー以外からのお申し込みを含みます）。応募状況により抽選・調整となる場合があります。<br>
               ※「保護者見学可」「保護者見学不可」は、講座中に保護者の方がお子様の様子を見学できるかどうかを示しています（宗像市教育委員会の回答による／変更となる場合があります）。<br>
@@ -1007,25 +1009,33 @@
             </div>
 
             <div class="form-checkbox-group">
-              <label class="checkbox-label">
-                <input type="checkbox" id="lunch_agree" required>
-                <span>昼食は<strong>大人のみ1食1,000円（税込）のお弁当をご用意（希望制・持参も可）</strong>、<strong>お子様・乳幼児は各自持参</strong>であること、飲み物は各自持参であること（ツアー中の飲食は自己負担）に同意します。</span>
-              </label>
+              <div class="checkbox-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="lunch_agree" required>
+                  <span>昼食は<strong>大人のみ1食1,000円（税込）のお弁当をご用意（希望制・持参も可）</strong>、<strong>お子様・乳幼児は各自持参</strong>であること、飲み物は各自持参であること（ツアー中の飲食は自己負担）に同意します。</span>
+                </label>
+              </div>
 
-              <label class="checkbox-label">
-                <input type="checkbox" id="course_agree" required>
-                <span>コースは<strong>お選びいただいた第1〜第3希望の中から決定する</strong>ため、<strong>第1希望以外のコースになる場合がある</strong>ことに同意します。</span>
-              </label>
+              <div class="checkbox-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="course_agree" required>
+                  <span>コースは<strong>お選びいただいた第1〜第3希望の中から決定する</strong>ため、<strong>第1希望以外のコースになる場合がある</strong>ことに同意します。</span>
+                </label>
+              </div>
 
-              <label class="checkbox-label">
-                <input type="checkbox" id="privacy_agree" required>
-                <span>旅行手配および保険適用のための個人情報取扱いに同意します。</span>
-              </label>
+              <div class="checkbox-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="privacy_agree" required>
+                  <span>旅行手配および保険適用のための個人情報取扱いに同意します。</span>
+                </label>
+              </div>
 
-              <label class="checkbox-label">
-                <input type="checkbox" id="kids_univ_media_agree" required>
-                <span>「むなかた子ども大学」の活動で撮影された<strong>写真・映像等の使用と個人情報の取扱い</strong>（規約5）に同意します。</span>
-              </label>
+              <div class="checkbox-item">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="kids_univ_media_agree" required>
+                  <span>「むなかた子ども大学」の活動で撮影された<strong>写真・映像等の使用と個人情報の取扱い</strong>（規約5）に同意します。</span>
+                </label>
+              </div>
             </div>
           </div>
 
@@ -1219,6 +1229,6 @@
       } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
     })();
   </script>
-  <script src="app.js?v=1.1.0"></script>
+  <script src="app.js?v=1.2.0"></script>
 </body>
 </html>
