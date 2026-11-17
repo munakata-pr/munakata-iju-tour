@@ -2298,3 +2298,253 @@ h5 {
 .checkbox-item .form-error-msg {
   margin: 4px 0 0 28px;
 }
+
+/* ============================================
+   第2回（2027-01-16・いちご狩りと住まい見学）追加スタイル
+   ============================================ */
+
+/* これまでの開催（1行） */
+.past-tours-note {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--text-light);
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 写真準備中の枠（.timeline-img-wrap と同じ 16:9） */
+.timeline-img-wrap.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* いちごファーム：要点の見出しは語中で折り返さない */
+.ichigo .kids-point h3 {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* お試し居住の案内 */
+.trial-note {
+  background-color: var(--bg-light);
+  border-top: 1px solid var(--border-light);
+  padding: 64px 0;
+}
+
+.trial-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background-color: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 36px 32px;
+  text-align: center;
+}
+
+.trial-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: var(--font-accent-jp);
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.trial-text {
+  font-size: 1.5rem;
+  line-height: 2;
+  margin-bottom: 24px;
+  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .trial-card { padding: 28px 20px; }
+  .trial-title { font-size: 1.9rem; }
+}
+
+/* ============================================
+   サイト構成の分割（トップ／第1回の記録／第2回の募集）追加スタイル
+   ============================================ */
+
+/* 「← 事業トップへ」 */
+.back-top {
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+.back-top a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 第2回の告知帯（トップ） */
+.announce-band {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 18px 0;
+}
+.announce-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.announce-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.announce-band .announce-btn {
+  background-color: #fff;
+  color: var(--primary-strong, var(--primary-color));
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .announce-text { font-size: 1.5rem; }
+  .announce-sep { display: none; }
+  .announce-text .phrase:nth-child(n+4) { display: block; margin: 0 auto; }
+  .announce-band .announce-btn { width: 100%; text-align: center; }
+}
+
+/* 写真準備中のカード画像（第3回カード） */
+.tour-card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 1.4rem;
+  min-height: 200px;
+}
+
+/* 第1回ページ：当日の様子・参加者の声 */
+.record-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.record-box-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: var(--font-accent-jp);
+}
+@media (max-width: 768px) {
+  .record-grid { grid-template-columns: 1fr; }
+}
+.tour-gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.tour-gallery figure { margin: 0; }
+.tour-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.tour-gallery figcaption {
+  margin-top: 8px;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: var(--text-light);
+  overflow-wrap: anywhere;
+}
+.voice-note {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin: 0 0 12px;
+}
+.voice-list { display: grid; gap: 16px; }
+.voice-card {
+  margin: 0;
+  padding: 16px 20px;
+  background-color: var(--bg-light);
+  border-left: 4px solid var(--border-light);
+  border-radius: 8px;
+}
+.voice-card p { margin: 0; font-size: 1.5rem; line-height: 1.9; overflow-wrap: anywhere; }
+.voice-card cite {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-style: normal;
+  color: var(--text-light);
+}
+
+/* ===== 開催一覧：申込受付中のカードを目立たせる（2026-11-17） ===== */
+.tour-card.is-open-card {
+  border: 3px solid var(--primary-strong);
+  box-shadow: 0 14px 36px rgba(29, 78, 216, 0.22);
+  transform: translateY(-8px);
+}
+.tour-card.is-open-card:hover { transform: translateY(-12px); }
+.tour-card-ribbon {
+  margin: 0;
+  padding: 10px 16px;
+  background-color: var(--primary-strong);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.05em;
+  word-break: keep-all;
+}
+.tour-card.is-open-card .tour-status.recruiting {
+  background-color: var(--accent-color);
+  color: #1f2937;
+}
+.tour-card-keyfacts {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  background-color: #fff7ed;
+  border-left: 4px solid #ea580c;
+  border-radius: 8px;
+  color: #9a3412;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+.tour-card-keyfacts i { width: 1.2em; }
+.tour-card-action.is-primary-cta {
+  background-color: var(--primary-strong);
+  font-size: 1.6rem;
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
+}
+.tour-card.is-closed-card .tour-card-img { filter: grayscale(0.5); }
+.tour-card-action.is-secondary {
+  background-color: #fff;
+  color: var(--primary-strong);
+  border: 2px solid var(--primary-strong);
+}
+.tour-card-action.is-secondary:hover { background-color: var(--primary-light); }
+@media (max-width: 768px) {
+  .tour-card.is-open-card { order: -1; transform: none; }
+  .tour-card.is-open-card:hover { transform: none; }
+}

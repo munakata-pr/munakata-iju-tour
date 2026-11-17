@@ -1,3 +1,6 @@
+// 第1回（子ども大学連動）専用の項目（お弁当・講座参加のお子様・コース希望・昼食同意・メディア同意）を使うか。
+// 第2回は false：HTML 側は data-tour1-only の hidden で非表示、検証・送信から外す（送信キーは空文字で維持）。第1回に戻すときは true にして hidden を外す。
+const TOUR1_FIELDS = false;
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwRqmI1_GBfy4Nw-hOaZhFP9BHZOw3O5ALvrXNwZNk2BqwZYKZFOPaYYh1qBoAMTgI4/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -5,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Header Scroll Effect
   const header = document.querySelector('.header');
   window.addEventListener('scroll', () => {
+    if (!header) return; // ヘッダーが無いページでも何もしない
     if (window.scrollY > 50) {
       header.classList.add('scrolled');
     } else {
@@ -72,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const COMPANION_IDS = {
     2: { name: 'companion_name', age: 'companion_age', rel: 'companion_relationship' },
     3: { name: 'companion3_name', age: 'companion3_age', rel: 'companion3_relationship' },
-    4: { name: 'companion4_name', age: 'companion4_age', rel: 'companion4_relationship' }
+    4: { name: 'companion4_name', age: 'companion4_age', rel: 'companion4_relationship' },
+    5: { name: 'companion5_name', age: 'companion5_age', rel: 'companion5_relationship' }
   };
 
   function participantsCount() {
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 同行者ブロック（2〜4人目）の表示制御 ---
   function updateCompanionBlocks() {
     const n = participantsCount();
-    [2, 3, 4].forEach((i) => {
+    [2, 3, 4, 5].forEach((i) => {
       const block = document.getElementById('companion_block_' + i);
       if (!block) return;
       const show = n >= i;
@@ -356,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Validate Companions（表示中のブロックのみ）
       const nParticipants = participantsCount();
-      for (let i = 2; i <= 4; i++) {
+      for (let i = 2; i <= 5; i++) {
         if (nParticipants < i) continue;
         const ids = COMPANION_IDS[i];
         const nameEl = document.getElementById(ids.name);
@@ -393,8 +398,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Validate Children（表示中のブロックのみ）
-      const nChildren = childrenCount();
+      // 第2回の新項目：お住まいの市区町村（必須）
+      const cityInput = document.getElementById('residence_city');
+      if (cityInput) {
+        if (cityInput.value.trim() === '') {
+          showError(cityInput, 'お住まいの市区町村を入力してください。');
+          isValid = false;
+        } else {
+          clearError(cityInput);
+        }
+      }
+
+      // Validate Children（第1回専用。第2回は対象外）
+      const nChildren = TOUR1_FIELDS ? childrenCount() : 0;
       for (let i = 1; i <= nChildren; i++) {
         const nameEl = document.getElementById('child' + i + '_name');
         const gradeEl = document.getElementById('child' + i + '_grade');
@@ -417,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Validate Course Wishes（講座に参加するお子様が0人のときは不要）
-      if (nChildren > 0 && courseOrder.length === 0) {
+      if (TOUR1_FIELDS && nChildren > 0 && courseOrder.length === 0) {
         setCourseError('参加を希望するコースを1つ以上選択してください（第3希望までの選択をおすすめします）。');
         isValid = false;
       } else {
@@ -442,9 +458,18 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(carCountSelect);
       }
 
-      // Validate Bento Count
+      // Validate Access Method（第2回の新項目）
+      const accessSelect = document.getElementById('access_method');
+      if (accessSelect && accessSelect.value === '') {
+        showError(accessSelect, 'JR東郷駅までお越しになる手段を選択してください。');
+        isValid = false;
+      } else if (accessSelect) {
+        clearError(accessSelect);
+      }
+
+      // Validate Bento Count（第1回専用）
       const bentoCountSelect = document.getElementById('bento_count');
-      if (bentoCountSelect && bentoCountSelect.value === '') {
+      if (TOUR1_FIELDS && bentoCountSelect && bentoCountSelect.value === '') {
         showError(bentoCountSelect, 'お弁当の注文の有無を選択してください。');
         isValid = false;
       } else if (bentoCountSelect) {
@@ -456,14 +481,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const courseAgree = document.getElementById('course_agree');
       const privacyAgree = document.getElementById('privacy_agree');
 
-      if (!lunchAgree.checked) {
+      if (TOUR1_FIELDS && !lunchAgree.checked) {
         showError(lunchAgree, '昼食・飲み物が各自持参（自己負担）であることへの同意が必要です。');
         isValid = false;
       } else {
         clearError(lunchAgree);
       }
 
-      if (courseAgree && nChildren > 0 && !courseAgree.checked) {
+      if (TOUR1_FIELDS && courseAgree && nChildren > 0 && !courseAgree.checked) {
         showError(courseAgree, '第1希望以外のコースになる場合があることへの同意が必要です。');
         isValid = false;
       } else if (courseAgree) {
@@ -478,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const kidsUnivMediaAgree = document.getElementById('kids_univ_media_agree');
-      if (kidsUnivMediaAgree && !kidsUnivMediaAgree.checked) {
+      if (TOUR1_FIELDS && kidsUnivMediaAgree && !kidsUnivMediaAgree.checked) {
         showError(kidsUnivMediaAgree, 'むなかた子ども大学での写真・映像等の使用と個人情報の取扱いへの同意が必要です。');
         isValid = false;
       } else if (kidsUnivMediaAgree) {
@@ -531,14 +556,21 @@ document.addEventListener('DOMContentLoaded', () => {
           address: addressInput.value.trim(),
           participants: participantsSelect ? participantsSelect.value : '1',
           course: courseSelect.options[courseSelect.selectedIndex].text,
-          course_wish_1: courseOrder[0] || '',
-          course_wish_2: courseOrder[1] || '',
-          course_wish_3: courseOrder[2] || '',
+          course_wish_1: TOUR1_FIELDS ? (courseOrder[0] || '') : '',
+          course_wish_2: TOUR1_FIELDS ? (courseOrder[1] || '') : '',
+          course_wish_3: TOUR1_FIELDS ? (courseOrder[2] || '') : '',
           // 0人のときも空欄にせず明示する（シート・通知メールで「未入力」と区別するため）
-          children: nChildren === 0 ? '0人（未就学児のみ・講座への参加なし）' : kidsParts.join('／'),
+          children: !TOUR1_FIELDS ? '' : (nChildren === 0 ? '0人（未就学児のみ・講座への参加なし）' : kidsParts.join('／')),
           companions_extra: extraCompanions.join('／'),
           car_count: carCountSelect ? carCountSelect.value : '',
-          bento_count: bentoCountSelect ? bentoCountSelect.value : '',
+          bento_count: TOUR1_FIELDS && bentoCountSelect ? bentoCountSelect.value : '',
+          // --- 第2回の新項目（GAS側の列追加が必要） ---
+          residence_city: cityInput ? cityInput.value.trim() : '',
+          considering_area: document.getElementById('considering_area') ? document.getElementById('considering_area').value.trim() : '',
+          move_timing: document.getElementById('move_timing') ? document.getElementById('move_timing').value : '',
+          access_method: accessSelect ? accessSelect.value : '',
+          allergy: document.getElementById('allergy') ? document.getElementById('allergy').value.trim() : '',
+          how_found: Array.from(document.querySelectorAll('input[name="how_found"]:checked')).map((el) => el.value).join('／'),
           inquiry: document.getElementById('inquiry').value.trim()
         };
 
@@ -655,11 +687,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!PHONE_PATTERN.test(v)) return '有効な電話番号を入力してください。';
         return null;
       },
-      address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null
+      address: (el) => el.value.trim() === '' ? 'ご住所を入力してください。' : null,
+      residence_city: (el) => el.value.trim() === '' ? 'お住まいの市区町村を入力してください。' : null
     };
 
     // 同行者（2〜4人目）：ブロックが表示されているときのみ検証
-    [2, 3, 4].forEach((i) => {
+    [2, 3, 4, 5].forEach((i) => {
       const ids = COMPANION_IDS[i];
       validators[ids.name] = (el) => {
         if (!blockVisible('companion_block_' + i)) return null;
@@ -674,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // お子様（1〜3人目）：選択した人数の欄のみ検証（0人のときは全欄対象外）
-    [1, 2, 3].forEach((i) => {
+    if (TOUR1_FIELDS) [1, 2, 3].forEach((i) => {
       validators['child' + i + '_name'] = (el) => {
         if (childrenCount() < i) return null;
         return el.value.trim() === '' ? 'お子様のお名前を入力してください。' : null;
@@ -710,7 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // セレクトは選択された時点でエラーを解除
-    ['tour_course', 'car_count', 'bento_count', 'companion_relationship', 'companion3_relationship', 'companion4_relationship'].forEach((id) => {
+    ['tour_course', 'car_count', 'bento_count', 'access_method', 'companion_relationship', 'companion3_relationship', 'companion4_relationship', 'companion5_relationship'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {
