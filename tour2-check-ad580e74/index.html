@@ -94,7 +94,7 @@
   <meta name="theme-color" content="#3b82f6">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="./style.css?v=preview1">
+  <link rel="stylesheet" href="./style.css?v=preview2">
 
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -203,7 +203,7 @@
           <dd>
             合計20名（1組最大5名・大人とお子様の合計）。定員を超えるお申し込みがあった場合は、締切後に抽選とします。<br>
             お申し込みが2組に満たない場合は中止とし、12月26日(土)までにメールでご連絡します。<br>
-            <strong>【第2回】2027年1月16日(土)開催分：12月24日(木)17:00締切・応募多数の場合は抽選</strong><br>
+            <strong class="overview-deadline"><span class="phrase">【第2回】</span><span class="phrase">2027年1月16日(土)開催分：</span><span class="phrase">12月24日(木)17:00締切・</span><span class="phrase">応募多数の場合は抽選</span></strong>
             ※1組最大5名（大人・お子様の合計）。6名以上をご希望の場合は事務局へご相談ください。
           </dd>
           
@@ -443,12 +443,6 @@
             <p class="form-note">※旅行保険の加入手続きに必要なため、番地までご記入ください。</p>
           </div>
 
-          <!-- Residence city -->
-          <div class="form-group">
-            <label for="residence_city" class="form-label">お住まいの市区町村<span class="required">必須</span></label>
-            <input type="text" id="residence_city" class="form-control" placeholder="福岡県福岡市中央区">
-          </div>
-
           <!-- Place status（定員を超えたときの抽選に使う） -->
           <div class="form-group">
             <label for="place_status" class="form-label">移住先の検討状況<span class="required">必須</span></label>
@@ -503,19 +497,6 @@
               <option value="自家用車">自家用車</option>
               <option value="その他">その他</option>
             </select>
-          </div>
-
-          <!-- Car Count -->
-          <div class="form-group">
-            <label for="car_count" class="form-label">当日、お車でお越しになる場合の台数<span class="required">必須</span></label>
-            <select id="car_count" class="form-control">
-              <option value="" disabled selected>選択してください</option>
-              <option value="0台（車では行かない）">0台（車では行かない・電車やバスで行く）</option>
-              <option value="1台">1台</option>
-              <option value="2台">2台</option>
-              <option value="3台以上">3台以上</option>
-            </select>
-            <p class="form-note">※専用の駐車場はありません。お車でお越しの方は、JR東郷駅周辺の有料駐車場をご利用ください（駐車料金は各自のご負担です）。</p>
           </div>
 
           <!-- Bento Order（大人の方用のお弁当の数） -->
@@ -1211,6 +1192,6 @@
       } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
     })();
   </script>
-  <script src="./app.js?v=preview1"></script>
+  <script src="./app.js?v=preview2"></script>
 </body>
 </html>

@@ -435,6 +435,20 @@ button, input, select, textarea {
   margin-left: 2px;
 }
 
+/* ツアー概要の申込締切の行：赤い枠で目立たせる */
+.overview-deadline {
+  display: block;
+  margin: 8px 0;
+  padding: 8px 14px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--danger-strong, #dc2626);
+  background: #fef2f2;
+  border: 1px solid var(--danger-color);
+  border-radius: var(--radius-md);
+}
+
 .overview-note {
   font-size: 1.3rem;
   color: var(--text-light);
