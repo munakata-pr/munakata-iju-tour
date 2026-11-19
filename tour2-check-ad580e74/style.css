@@ -1,0 +1,2570 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Quicksand:wght@500;700&display=swap');
+
+:root {
+  /* シンプルでおしゃれなブルー＆ウォームカラー */
+  --primary-color: #3b82f6; /* 清潔感のあるスカイブルー */
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff; /* 極めて淡いブルー */
+  --secondary-color: #f87171; /* 優しいコーラルピンク */
+  --accent-color: #fbbf24; /* 温かみのあるミモザイエロー */
+  
+  --text-dark: #2c3e50; /* 深みのあるスレートグレー */
+  --text-light: #7f8c8d;
+  --bg-light: #f8fafc; /* 清潔感のある非常に薄いグレー */
+  --bg-white: #ffffff;
+  --border-color: #e2e8f0; /* 薄く繊細なボーダー */
+  --border-light: #f1f5f9;
+  --danger-color: #ef4444;
+  --success-color: #10b981;
+  
+  --font-base: 'Noto Sans JP', sans-serif;
+  --font-accent-jp: 'Zen Kaku Gothic New', sans-serif; /* おしゃれなゴシック体 */
+  --font-accent: 'Quicksand', sans-serif; /* 丸みのあるおしゃれな英数字フォント */
+  
+  /* 繊細でやわらかい影（おしゃれな高級感） */
+  --shadow-sm: 0 2px 10px rgba(59, 130, 246, 0.03);
+  --shadow-md: 0 10px 30px rgba(59, 130, 246, 0.06);
+  --shadow-lg: 0 20px 40px rgba(59, 130, 246, 0.08);
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+
+/* Reset Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: 1.6rem;
+  line-height: 1.8;
+  color: var(--text-dark);
+  background-color: var(--bg-white); /* 背景は白 */
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+li {
+  list-style: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* Utility Classes */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section-padding {
+  padding: 100px 0;
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.phrase {
+  display: inline-block;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 20px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: 50px;
+  font-family: var(--font-accent-jp); /* アクセント用ゴシック体 */
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-white);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge-primary {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-color);
+  color: var(--bg-white);
+  border-color: var(--secondary-color);
+}
+
+/* Header & Navigation */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition-smooth);
+}
+
+.header.scrolled {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-accent);
+  font-weight: 700;
+  font-size: 1.8rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-main {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 0.02em;
+}
+
+.logo-sub {
+  font-size: 1.0rem;
+  color: var(--text-light);
+  font-weight: 700;
+  font-family: var(--font-accent);
+  letter-spacing: 0.1em;
+}
+
+.nav-list {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 50px;
+  transition: var(--transition-smooth);
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+  background-color: var(--primary-light);
+}
+
+.header-cta {
+  background-color: var(--primary-color);
+  color: var(--bg-white);
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.3rem;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+
+.header-cta:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 8px;
+  border-radius: 50%;
+  transition: var(--transition-smooth);
+}
+
+.menu-toggle:hover {
+  background-color: var(--bg-light);
+}
+
+.menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-dark);
+  transition: var(--transition-smooth);
+}
+
+/* Hero Section */
+.hero {
+  padding-top: 160px;
+  padding-bottom: 120px;
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.6) 100%), 
+              url('../assets/hero_munakata.webp') no-repeat center 88%/cover;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+.hero-tag {
+  font-family: var(--font-accent-jp); /* アクセント用ゴシック体 */
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  display: inline-block;
+  background-color: var(--primary-light);
+  padding: 4px 16px;
+  border-radius: 50px;
+}
+
+.hero-title {
+  font-size: 5.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+}
+
+.hero-desc {
+  font-size: 1.6rem;
+  color: var(--text-dark);
+  margin-bottom: 40px;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 36px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--bg-white);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-light);
+  transform: translateY(-2px);
+}
+
+/* Section Header */
+.section-header {
+  max-width: 600px;
+  margin: 0 auto 60px;
+}
+
+.section-subtitle {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: var(--font-accent-jp); /* アクセント用ゴシック体 */
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.section-title {
+  font-size: 2.8rem;
+  color: var(--text-dark);
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* Overview Section */
+.overview {
+  background-color: var(--bg-white); /* 背景白 */
+}
+
+.overview-table {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.overview-dl {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  row-gap: 24px;
+}
+
+.overview-dl dt {
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.8;
+}
+
+.overview-dl dt::before {
+  content: '✦';
+  color: var(--accent-color);
+  font-size: 1.6rem;
+  line-height: 1.8;
+}
+
+.overview-dl dd {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  line-height: 1.8;
+}
+
+/* ツアー概要の開催日（第2回ページ）：日付を大きく目立たせる */
+.overview-date {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--primary-dark);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  padding: 2px 14px;
+  margin-bottom: 4px;
+}
+
+.overview-date-dow {
+  font-size: 1.8rem;
+  margin-left: 2px;
+}
+
+.overview-note {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin-top: 12px;
+  display: block;
+}
+
+/* Tour Lineup Section */
+.tours {
+  background-color: var(--bg-white); /* 背景白 */
+  border-top: 1px solid var(--border-light);
+}
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.tour-card {
+  background-color: var(--bg-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border: 1px solid var(--border-color);
+}
+
+.tour-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.tour-card-img-wrap {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.tour-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+
+.tour-status {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 4px 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 50px;
+  color: var(--bg-white);
+  z-index: 10;
+}
+
+.tour-status.recruiting {
+  background-color: var(--primary-color);
+}
+
+.tour-status.upcoming {
+  background-color: var(--text-light);
+}
+
+.tour-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.tour-card-meta {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  display: flex;
+  gap: 16px;
+}
+
+.tour-card-meta i {
+  color: var(--primary-color);
+}
+
+.tour-card-title {
+  font-size: 1.9rem;
+  color: var(--text-dark);
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.tour-card-desc {
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.tour-card-info {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+}
+
+.tour-card-info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tour-card-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.tour-card-info-label {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.tour-card-action {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 50px;
+  background-color: var(--primary-color);
+  color: var(--bg-white);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.tour-card-action:hover {
+  background-color: var(--primary-dark);
+}
+
+.tour-card.upcoming-card {
+  opacity: 0.9;
+}
+
+.tour-card.upcoming-card .tour-card-action {
+  background-color: var(--border-color);
+  color: var(--text-light);
+  cursor: not-allowed;
+}
+
+.tour-card.upcoming-card:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-color);
+}
+
+/* Itinerary Timeline Section */
+.itinerary {
+  background-color: var(--bg-white); /* 背景白 */
+  border-top: 1px solid var(--border-light);
+}
+
+.itinerary-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 36px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 17px;
+  width: 2px;
+  height: 100%;
+  background-color: var(--border-color);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  top: 6px;
+  left: -23px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  z-index: 2;
+}
+
+.timeline-time {
+  font-family: var(--font-accent);
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+  display: inline-block;
+  background-color: var(--primary-light);
+  padding: 1px 10px;
+  border-radius: 50px;
+}
+
+.timeline-content-card {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  transition: var(--transition-smooth);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.timeline-body {
+  padding-top: 16px;
+}
+
+.timeline-desc {
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+.timeline-img-wrap {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: 260px;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.timeline-img-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.timeline-img-caption {
+  display: block;
+  font-size: 1.3rem;
+  text-align: center;
+  margin-top: 6px;
+  color: var(--text-dark);
+}
+
+/* Application Form Section */
+.booking {
+  background-color: var(--bg-light);
+  border-top: 1px solid var(--border-light);
+}
+
+.booking-card {
+  background-color: var(--bg-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  max-width: 800px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.booking-header {
+  background-color: var(--primary-light);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--primary-dark);
+  padding: 40px;
+  text-align: center;
+}
+
+.booking-header h3 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.booking-header p {
+  font-size: 1.4rem;
+  font-family: var(--font-accent-jp); /* アクセント用ゴシック体 */
+  color: var(--text-dark);
+}
+
+.form-body {
+  padding: 40px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.form-label .required {
+  background-color: var(--secondary-color);
+  color: var(--bg-white);
+  font-size: 1.1rem;
+  padding: 2px 8px;
+  border-radius: 50px;
+  margin-left: 8px;
+  vertical-align: middle;
+  /* バッジがラベル折返し時に「必/須」と泣き別れしないようにする */
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.form-control {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-light);
+  padding: 14px 18px;
+  /* 16px未満だとiPhone Safariがフォーカス時に自動ズームするため1.6rem必須 */
+  font-size: 1.6rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  background-color: var(--bg-white);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  min-height: 40px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  /* タップ領域の確保（44px以上） */
+  padding: 10px 12px 10px 4px;
+  margin: -6px 0;
+}
+
+.radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1.6;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  accent-color: var(--primary-color);
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.form-error-msg {
+  color: var(--danger-color);
+  font-size: 1.3rem;
+  margin-top: 6px;
+  display: none;
+  font-weight: 700;
+}
+
+.form-group.has-error .form-control,
+.has-error .form-control {
+  border-color: var(--danger-color);
+  background-color: #fff8f8;
+}
+
+.form-group.has-error .form-error-msg,
+.has-error .form-error-msg {
+  display: block;
+}
+
+.form-agreement-box {
+  background-color: var(--bg-light);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin-bottom: 24px;
+  max-height: 200px;
+  overflow-y: scroll;
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  line-height: 1.7;
+}
+
+.form-agreement-box h5 {
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  font-size: 1.4rem;
+}
+
+.form-agreement-box p {
+  margin-bottom: 8px;
+}
+
+/* --- フォーム改善（2026-08-15）: 着手ハードル低減・入力補助 --- */
+.form-intro-note {
+  background-color: #eff4ff;
+  border-left: 4px solid var(--primary-strong);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 14px 18px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.form-intro-note p {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.form-intro-note p + p {
+  margin-top: 8px;
+}
+
+.form-intro-note i {
+  color: var(--primary-strong);
+  margin-right: 4px;
+}
+
+.form-note {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--text-muted-aa);
+  margin: 6px 0 0;
+}
+
+.form-error-summary {
+  display: none;
+  background-color: #fef2f2;
+  border: 1px solid var(--danger-strong);
+  border-radius: var(--radius-sm);
+  color: var(--danger-strong);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.7;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-error-summary.active {
+  display: block;
+}
+
+.form-submit-note {
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: var(--text-muted-aa);
+  margin: 14px 0 0;
+}
+
+.form-submit-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.btn-submit {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px;
+  font-size: 1.6rem;
+  background-color: var(--primary-color);
+  color: var(--bg-white);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Accordions Section */
+.terms {
+  background-color: var(--bg-white); /* 背景白 */
+  border-top: 1px solid var(--border-light);
+}
+
+.accordion-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.accordion-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.accordion-header {
+  background-color: var(--bg-light);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.accordion-header:hover {
+  background-color: var(--primary-light);
+}
+
+.accordion-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.accordion-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-light);
+  transition: var(--transition-smooth);
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(45deg);
+  color: var(--primary-color);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  padding: 0 24px;
+  background-color: var(--bg-white);
+}
+
+.accordion-item.active .accordion-content {
+  max-height: 2000px;
+  padding: 24px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border-light);
+}
+
+.accordion-inner-text {
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  line-height: 1.8;
+}
+
+.accordion-inner-text h3,
+.accordion-inner-text h4,
+.accordion-inner-text h5 {
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 16px 0 8px;
+  font-size: 1.5rem;
+}
+
+.accordion-inner-text h3:first-child,
+.accordion-inner-text h4:first-child,
+.accordion-inner-text h5:first-child {
+  margin-top: 0;
+}
+
+.accordion-inner-text ul {
+  padding-left: 20px;
+  list-style: disc;
+  margin-bottom: 16px;
+}
+
+.accordion-inner-text p {
+  margin-bottom: 16px;
+}
+
+/* Footer Section */
+.footer {
+  background-color: var(--bg-light); /* 明るいグレー背景でクリーンに */
+  color: var(--text-dark);
+  padding: 80px 0 40px;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-info-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.footer-info-logo .logo-main {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.footer-info-desc {
+  font-size: 1.4rem;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.footer-contact-item {
+  display: flex;
+  gap: 12px;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.footer-contact-icon {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+}
+
+.footer-contact-text span {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.footer-nav-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.footer-nav-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+.footer-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-nav-link {
+  font-size: 1.4rem;
+  color: var(--text-light);
+}
+
+.footer-nav-link:hover {
+  color: var(--primary-color);
+  padding-left: 4px;
+}
+
+.footer-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-banner-link {
+  background-color: var(--bg-white);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 6px;
+  color: var(--text-dark);
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.footer-banner-link:hover {
+  transform: translateY(-1px);
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-color);
+  padding-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+  color: var(--text-light);
+}
+
+.footer-bottom a {
+  /* タップ領域の確保 */
+  display: inline-block;
+  padding: 10px 4px;
+}
+
+/* Booking Success Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(44, 62, 80, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-smooth);
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  transform: scale(0.95);
+  transition: var(--transition-smooth);
+}
+
+.modal.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-success-icon {
+  width: 72px;
+  height: 72px;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.6rem;
+  margin: 0 auto 20px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.modal-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.modal-desc {
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.modal-close-btn {
+  background-color: var(--primary-color);
+  color: var(--bg-white);
+  padding: 12px 36px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+}
+
+.modal-close-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .header-container {
+    height: 70px;
+  }
+  
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .nav {
+    position: fixed;
+    top: 70px;
+    left: 100%;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+    transition: var(--transition-smooth);
+    padding: 32px;
+    z-index: 999;
+  }
+  
+  .nav.active {
+    left: 0;
+  }
+  
+  .nav-list {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  
+  .nav-link {
+    font-size: 1.8rem;
+    display: inline-block;
+  }
+  
+  .hero {
+    padding-top: 110px;
+    padding-bottom: 60px;
+    min-height: auto;
+  }
+  
+  .hero-title {
+    font-size: 4.0rem;
+  }
+  
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  
+  .footer-top > div:first-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 60px 0;
+  }
+  
+  .hero-title {
+    font-size: 3.0rem;
+  }
+  
+  .overview-table {
+    padding: 24px;
+  }
+  
+  .overview-dl {
+    grid-template-columns: 1fr;
+    row-gap: 16px;
+  }
+  
+  .overview-dl dt {
+    margin-bottom: 4px;
+  }
+  
+  .form-body {
+    padding: 24px;
+  }
+  
+  .form-group.row-2 {
+    grid-template-columns: 1fr;
+    gap: 20px; /* 縦積み時に入力欄と次のラベルが密着しないようにする */
+  }
+  
+  .footer-top {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-top > div:first-child {
+    grid-column: span 1;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .timeline {
+    padding-left: 28px;
+  }
+  
+  .timeline::before {
+    left: 11px;
+  }
+  
+  .timeline-marker {
+    left: -21px;
+    width: 10px;
+    height: 10px;
+  }
+  
+  .timeline-content-card {
+    padding: 16px;
+  }
+}
+
+/* スマホ幅：ヘッダーのはみ出し防止・コンパクト化 */
+@media (max-width: 600px) {
+  .header-container {
+    gap: 8px;
+  }
+
+  .header-logo {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .logo-main {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .logo-sub {
+    display: none;
+  }
+
+  .header-cta {
+    white-space: nowrap;
+    font-size: 1.2rem;
+    padding: 8px 14px;
+    flex-shrink: 0;
+  }
+
+  .menu-toggle {
+    flex-shrink: 0;
+  }
+
+  /* コース紹介カード内の項目をラベル＋値の縦積みに */
+  .tour-card-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+}
+
+/* 小型スマホ：ランチ写真2枚並びを縦積みに */
+@media (max-width: 480px) {
+  .timeline-img-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================================
+   2026-08-10 スマホ体験改善（GA4分析にもとづく）
+   - ファーストビューに開催日・参加費・締切を明示
+   - スマホ限定の追従CTA（申込フォームまで約9画面あるため）
+   - スケジュールの折りたたみ（全体の38%を占め、フォーム到達を妨げていた）
+   ========================================================================= */
+
+/* --- ヒーロー：開催情報 --- */
+.hero-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 28px;
+  padding: 0;
+}
+
+.hero-fact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.hero-fact-label {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--bg-white);
+  background: var(--primary-color);
+  border-radius: 4px;
+  padding: 3px 8px;
+  letter-spacing: 0.04em;
+}
+
+.hero-fact-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.hero-fact-dow { font-size: 1.4rem; }
+
+.hero-fact-note {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.hero-fact-deadline .hero-fact-label { background: var(--danger-color); }
+.hero-fact-deadline .hero-fact-value { color: var(--danger-color); }
+.hero-fact-deadline .hero-fact-note { color: var(--danger-color); }
+
+/* --- スケジュールの折りたたみ（スマホのみ有効） --- */
+.itinerary-toggle { display: none; }
+
+/* --- スマホ限定の追従CTA --- */
+.sticky-cta { display: none; }
+
+@media (max-width: 768px) {
+  /* ファーストビューを詰めて、開催情報とボタンを1画面に収める */
+  .hero {
+    padding-top: 116px;
+    padding-bottom: 56px;
+    min-height: 0;
+    background-position: center 80%;
+  }
+
+  .hero-tag { margin-bottom: 12px; }
+  .hero-title { margin-bottom: 14px; }
+
+  .hero-desc {
+    font-size: 1.5rem;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  /* 3行目はスマホでは省略（下部の「ツアー概要」で同じ内容を説明している） */
+  /* 2行目以降はスマホでは省略（下部の「ツアー概要」で同じ内容を説明している） */
+  .hero-desc-tail { display: none; }
+
+  .hero-facts {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .hero-fact {
+    width: 100%;
+    padding: 9px 12px;
+    gap: 9px;
+  }
+
+  .hero-fact-label {
+    width: 62px;
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  .hero-fact-value { font-size: 1.5rem; }
+  .hero-fact-note { font-size: 1.15rem; }
+
+  /* 追従CTAに隠れないよう、フッター下端に余白を確保 */
+  .footer { padding-bottom: 108px; }
+
+  /* ヒーロー背景をスマホ向けの軽量画像に差し替え（表示速度対策） */
+  .hero {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.6) 100%),
+                url('../assets/hero_munakata_sp.webp') no-repeat center 80%/cover;
+  }
+
+  /* スケジュールを初期状態で折りたたむ */
+  .itinerary-collapse {
+    position: relative;
+    max-height: 460px;
+    overflow: hidden;
+  }
+
+  .itinerary-collapse::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--bg-white) 92%);
+    pointer-events: none;
+  }
+
+  .itinerary-collapse.is-open {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .itinerary-collapse.is-open::after { display: none; }
+
+  .itinerary-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .itinerary-toggle-icon {
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.2s ease;
+  }
+
+  .itinerary-collapse.is-open ~ .itinerary-toggle .itinerary-toggle-icon {
+    transform: rotate(-135deg) translate(-2px, -2px);
+  }
+
+  /* 追従CTA本体 */
+  .sticky-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1500;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.97);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 16px rgba(44, 62, 80, 0.10);
+    text-decoration: none;
+    transform: translateY(0);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  .sticky-cta.is-hidden {
+    transform: translateY(120%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sticky-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .sticky-cta-main {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.35;
+  }
+
+  .sticky-cta-sub {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--danger-color);
+    line-height: 1.35;
+  }
+
+  .sticky-cta-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 22px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bg-white);
+    background: var(--primary-color);
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+  }
+}
+
+/* --- タップ領域の確保（推奨44px） --- */
+@media (max-width: 600px) {
+  .header-cta {
+    font-size: 1.3rem;
+    padding: 12px 14px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .logo-main { font-size: 1.3rem; }
+}
+
+/* --- 小型スマホ（iPhone SE 等）：ファーストビューをさらに圧縮 --- */
+@media (max-width: 400px) {
+  .hero {
+    padding-top: 104px;
+    padding-bottom: 44px;
+  }
+
+  .hero-title { font-size: 2.7rem; }
+  .hero-desc { margin-bottom: 14px; }
+  .hero-facts { margin-bottom: 16px; }
+  .hero-fact { padding: 8px 10px; }
+  .sticky-cta-main { font-size: 1.2rem; }
+  .sticky-cta-btn { padding: 0 16px; font-size: 1.4rem; }
+}
+
+/* =========================================================================
+   2026-08-10 コントラスト改善（WCAG AA 4.5:1 対応）
+   ブランドのブルーは維持し、白文字を載せる面と小さな文字だけ濃い階調に置換。
+   白/#3b82f6 = 3.68 → 白/#1d4ed8 = 6.70
+   白/#ef4444 = 3.76 → 白/#dc2626 = 4.83
+   ========================================================================= */
+:root {
+  --primary-strong: #1d4ed8; /* 白文字を載せる面・小さな文字用のブルー */
+  --danger-strong: #dc2626;  /* 同上のレッド */
+  --text-muted-aa: #64748b;  /* 補足文用グレー（白背景で4.76:1） */
+}
+
+/* 白文字を載せる面 */
+.header-cta,
+.btn-primary,
+.tour-status.recruiting,
+.tour-card-action,
+.btn-submit,
+.modal-close-btn {
+  background-color: var(--primary-strong);
+}
+
+/* 「必須」バッジ：白/#f87171 = 2.77 と最も低かったため濃い赤に */
+.form-label .required,
+.required {
+  background-color: var(--danger-strong);
+  font-size: 1.2rem;
+}
+
+.header-cta:hover,
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+/* 白背景に置くブランドカラーの文字 */
+.hero-tag,
+.section-subtitle,
+.timeline-time,
+.tour-card-info-label,
+.overview-dl dt,
+.form-agreement-box h5,
+.accordion-inner-text h3,
+.accordion-inner-text h4,
+.accordion-inner-text h5,
+h5 {
+  color: var(--primary-strong);
+}
+
+/* 補足文のグレー：#7f8c8d は薄いグレー背景で 3.32 だったため一段濃く */
+:root { --text-light: #64748b; }
+
+/* ヒーローの開催情報 */
+.hero-fact-label {
+  background: var(--primary-strong);
+  font-size: 1.3rem;
+}
+
+.hero-fact-note {
+  font-size: 1.3rem;
+  color: var(--text-muted-aa);
+}
+
+.hero-fact-deadline .hero-fact-label { background: var(--danger-strong); }
+.hero-fact-deadline .hero-fact-value,
+.hero-fact-deadline .hero-fact-note { color: var(--danger-strong); }
+
+@media (max-width: 768px) {
+  .hero-fact-label { font-size: 1.3rem; }
+  .hero-fact-note { font-size: 1.3rem; }
+
+  /* 追従CTA */
+  .sticky-cta-btn { background: var(--primary-strong); }
+  .sticky-cta-sub { color: var(--danger-strong); }
+}
+
+@media (max-width: 400px) {
+  .sticky-cta-main { font-size: 1.3rem; }
+}
+
+/* ===============================================
+   受付終了（第1回：2026-08-23 締切）
+   次回募集時はこのブロックの適用箇所を外す
+   =============================================== */
+
+/* ステータスバッジ */
+.tour-status.closed {
+  background-color: var(--text-muted-aa);
+}
+
+/* 申込導線の無効化表示（a → span 化した要素） */
+.header-cta.is-closed {
+  background-color: var(--text-muted-aa);
+  cursor: default;
+}
+
+.header-cta.is-closed:hover {
+  background-color: var(--text-muted-aa);
+}
+
+.btn.is-disabled,
+.tour-card-action.is-disabled {
+  background-color: var(--bg-light);
+  color: var(--text-muted-aa);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tour-card-action.is-disabled {
+  display: block;
+  box-sizing: border-box;
+}
+
+.btn.is-disabled:hover,
+.tour-card-action.is-disabled:hover {
+  background-color: var(--bg-light);
+  transform: none;
+}
+
+/* 申込セクションの受付終了パネル */
+.booking-closed {
+  margin-top: 20px;
+  padding: 24px;
+  background-color: var(--bg-white);
+  border: 2px solid var(--danger-strong);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.booking-closed-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--danger-strong);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.booking-closed-text {
+  font-size: 1.4rem;
+  line-height: 1.9;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.booking-closed-contact {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 1.4rem;
+  line-height: 1.9;
+  color: var(--text-dark);
+}
+
+.booking-closed-contact-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.booking-closed-contact a {
+  color: var(--primary-strong);
+  text-decoration: underline;
+}
+
+/* 追従CTA（受付終了時） */
+.sticky-cta.is-closed .sticky-cta-btn {
+  background-color: var(--text-muted-aa);
+}
+
+@media (max-width: 480px) {
+  .booking-closed { padding: 18px; }
+  .booking-closed-title { font-size: 1.7rem; }
+}
+
+/* ============================================
+   第2回（むなかた子ども大学連動）追加スタイル
+   2026-08-27
+   ============================================ */
+
+/* 子ども大学紹介セクション */
+.kids-univ {
+  background-color: var(--bg-white);
+  border-top: 1px solid var(--border-light);
+}
+
+.kids-univ-lead {
+  max-width: 760px;
+  margin: 0 auto 40px;
+  font-size: 1.5rem;
+  line-height: 2;
+}
+
+.kids-univ-points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.kids-point {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.kids-point i {
+  font-size: 2.8rem;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+}
+
+.kids-point h3 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-family: var(--font-accent-jp);
+}
+
+.kids-point p {
+  font-size: 1.35rem;
+  color: var(--text-light);
+  line-height: 1.8;
+  text-align: left;
+}
+
+.kids-univ-note {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 1.3rem;
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+.kids-univ-note a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* スケジュール注記 */
+.itinerary-note {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin-bottom: 32px;
+}
+
+/* フォーム内サブブロック（同行者・お子様） */
+.sub-block {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  background-color: var(--bg-light);
+}
+
+.sub-block + .sub-block {
+  margin-top: 16px;
+}
+
+.sub-block-title {
+  margin: 0 0 16px;
+  font-size: 1.6rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.sub-block .form-control {
+  background-color: var(--bg-white);
+}
+
+/* コース選択リスト（チェック順＝希望順） */
+.course-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.course-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  background-color: var(--bg-light);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.course-option:hover {
+  border-color: var(--primary-color);
+}
+
+.course-option.is-selected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.course-check {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.course-thumb {
+  width: 76px;
+  height: 64px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 6px;
+  background-color: var(--border-light);
+  margin-top: 2px;
+}
+
+.course-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.course-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.course-desc {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+}
+
+.course-provider {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.course-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.course-grade {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  background-color: rgba(59, 130, 246, 0.1);
+  padding: 1px 10px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.course-visit {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.course-visit.ok {
+  color: #047857;
+  background-color: rgba(16, 185, 129, 0.12);
+}
+
+.course-visit.ng {
+  color: #92400e;
+  background-color: rgba(251, 191, 36, 0.18);
+}
+
+.course-visit.pending {
+  color: #6b7280;
+  background-color: rgba(107, 114, 128, 0.12);
+}
+
+.course-cap {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.course-rank {
+  position: absolute;
+  top: -9px;
+  right: 10px;
+  background-color: var(--secondary-color);
+  color: var(--bg-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1px 10px;
+  border-radius: 50px;
+  box-shadow: var(--shadow-sm);
+}
+
+.course-rank:empty {
+  display: none;
+}
+
+.course-option.is-ineligible {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.course-option.is-ineligible .course-check {
+  cursor: not-allowed;
+}
+
+.course-option.is-ineligible .course-name::after {
+  content: "（対象学年外）";
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--danger-color);
+}
+
+.course-summary {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: var(--radius-sm);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+.course-summary.active {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .kids-univ-points {
+    grid-template-columns: 1fr;
+  }
+
+  .course-list {
+    grid-template-columns: 1fr;
+  }
+
+  .course-thumb {
+    width: 64px;
+    height: 54px;
+  }
+}
+
+/* ヘッダーの日本語中折れ防止（ナビ6項目化に伴う対応） */
+.logo-main,
+.nav-link,
+.header-cta {
+  white-space: nowrap;
+}
+
+/* PCナビ表示幅（1025px〜）のうち狭い帯域では余白を詰めて6項目を収める */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .nav-list {
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 8px 10px;
+    font-size: 1.3rem;
+  }
+}
+
+/* =========================================================================
+   2026-09-19 スマホ ヘッダー修正（実測：375px でロゴ文字がCTAに 44px 重なり、320px で 99px）
+   原因＝上の「中折れ防止」の nowrap が全幅に効き、.logo-main が flex コンテナから溢れていた。
+   600px 以下は「宗像市」<wbr>「暮らし体感バスツアー」の2行折返しを許可する。
+   ========================================================================= */
+@media (max-width: 600px) {
+  .header-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .logo-text {
+    min-width: 0; /* flex子の min-width:auto で溢れるのを防ぐ */
+  }
+
+  .logo-main {
+    white-space: normal;
+    word-break: keep-all;    /* 語中改行はしない（<wbr> 位置でのみ折返す） */
+    overflow-wrap: anywhere; /* 極小幅での保険 */
+    line-height: 1.3;
+  }
+
+  .menu-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    margin-right: -6px; /* 44px の当たり判定を右余白側に食い込ませ、ロゴ文字の幅を確保 */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-cta {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* minmax(320px, 1fr) が 360px 以下で横はみ出しを起こすため 1 列固定 */
+  .tours-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 414px 以下は CTA を「申し込む」等に短縮（ロゴ「宗像市／暮らし体感バスツアー」を2行に収めるため） */
+@media (max-width: 414px) {
+  .header-cta-long {
+    display: none;
+  }
+}
+
+/* コース一覧のバッジ・実施団体：11〜11.5px → 12px（可読性の下限） */
+.course-grade,
+.course-provider,
+.course-visit {
+  font-size: 1.2rem;
+}
+
+/* =========================================================================
+   申込フォーム改修（2026-10-05）: エラー・通知を操作した場所の近くに出す
+   ========================================================================= */
+/* コース未選択のエラーは一覧の上に枠付きで出す（一覧の下だと17コース分の下に埋もれていた） */
+#courseError {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  background-color: #fef2f2;
+  border: 1px solid var(--danger-strong);
+  border-radius: var(--radius-sm);
+  color: var(--danger-strong);
+  line-height: 1.6;
+}
+
+/* 学年変更で外れたコース・4つ目の選択の通知（app.js が操作した要素の直下に差し込む） */
+.course-notice {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background-color: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-left-width: 4px;
+  border-radius: var(--radius-sm);
+  color: #78350f;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.7;
+  scroll-margin: 96px 0 16px;
+}
+
+/* コース一覧（グリッド）内では1行ぶち抜きにし、PC2列表示で右隣のコースが下にずれないよう dense で詰める */
+.course-list {
+  grid-auto-flow: dense;
+}
+
+.course-list > .course-notice {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+/* 同意チェックのエラーは項目ごとに、チェックボックスの右の文頭に揃えて出す（18px＋gap 10px） */
+.checkbox-item .form-error-msg {
+  margin: 4px 0 0 28px;
+}
+
+/* ============================================
+   第2回（2027-01-16・いちご狩りと住まい見学）追加スタイル
+   ============================================ */
+
+/* これまでの開催（1行） */
+.past-tours-note {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--text-light);
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 写真準備中の枠（.timeline-img-wrap と同じ 16:9） */
+.timeline-img-wrap.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* いちごファーム：要点の見出しは語中で折り返さない */
+.ichigo .kids-point h3 {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* お試し居住の案内 */
+.trial-note {
+  background-color: var(--bg-light);
+  border-top: 1px solid var(--border-light);
+  padding: 64px 0;
+}
+
+.trial-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background-color: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 36px 32px;
+  text-align: center;
+}
+
+.trial-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: var(--font-accent-jp);
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.trial-text {
+  font-size: 1.5rem;
+  line-height: 2;
+  margin-bottom: 24px;
+  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .trial-card { padding: 28px 20px; }
+  .trial-title { font-size: 1.9rem; }
+}
+
+/* ============================================
+   サイト構成の分割（トップ／第1回の記録／第2回の募集）追加スタイル
+   ============================================ */
+
+/* 「← 事業トップへ」 */
+.back-top {
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+.back-top a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 第2回の告知帯（トップ） */
+.announce-band {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 18px 0;
+}
+.announce-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.announce-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.announce-band .announce-btn {
+  background-color: #fff;
+  color: var(--primary-strong, var(--primary-color));
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .announce-text { font-size: 1.5rem; }
+  .announce-sep { display: none; }
+  .announce-text .phrase:nth-child(n+4) { display: block; margin: 0 auto; }
+  .announce-band .announce-btn { width: 100%; text-align: center; }
+}
+
+/* 写真準備中のカード画像（第3回カード） */
+.tour-card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 1.4rem;
+  min-height: 200px;
+}
+
+/* 第1回ページ：当日の様子・参加者の声 */
+.record-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.record-box-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: var(--font-accent-jp);
+}
+@media (max-width: 768px) {
+  .record-grid { grid-template-columns: 1fr; }
+}
+.tour-gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.tour-gallery figure { margin: 0; }
+.tour-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.tour-gallery figcaption {
+  margin-top: 8px;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: var(--text-light);
+  overflow-wrap: anywhere;
+}
+.voice-note {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin: 0 0 12px;
+}
+.voice-list { display: grid; gap: 16px; }
+.voice-card {
+  margin: 0;
+  padding: 16px 20px;
+  background-color: var(--bg-light);
+  border-left: 4px solid var(--border-light);
+  border-radius: 8px;
+}
+.voice-card p { margin: 0; font-size: 1.5rem; line-height: 1.9; overflow-wrap: anywhere; }
+.voice-card cite {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-style: normal;
+  color: var(--text-light);
+}
+
+/* ===== 開催一覧：申込受付中のカードを目立たせる（2026-11-17） ===== */
+.tour-card.is-open-card {
+  border: 3px solid var(--primary-strong);
+  box-shadow: 0 14px 36px rgba(29, 78, 216, 0.22);
+  transform: translateY(-8px);
+}
+.tour-card.is-open-card:hover { transform: translateY(-12px); }
+.tour-card-ribbon {
+  margin: 0;
+  padding: 10px 16px;
+  background-color: var(--primary-strong);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.05em;
+  word-break: keep-all;
+}
+.tour-card.is-open-card .tour-status.recruiting {
+  background-color: var(--accent-color);
+  color: #1f2937;
+}
+.tour-card-keyfacts {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  background-color: #fff7ed;
+  border-left: 4px solid #ea580c;
+  border-radius: 8px;
+  color: #9a3412;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+.tour-card-keyfacts i { width: 1.2em; }
+.tour-card-action.is-primary-cta {
+  background-color: var(--primary-strong);
+  font-size: 1.6rem;
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
+}
+.tour-card.is-closed-card .tour-card-img { filter: grayscale(0.5); }
+.tour-card-action.is-secondary {
+  background-color: #fff;
+  color: var(--primary-strong);
+  border: 2px solid var(--primary-strong);
+}
+.tour-card-action.is-secondary:hover { background-color: var(--primary-light); }
+@media (max-width: 768px) {
+  .tour-card.is-open-card { order: -1; transform: none; }
+  .tour-card.is-open-card:hover { transform: none; }
+}
