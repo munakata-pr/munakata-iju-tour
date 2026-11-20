@@ -254,7 +254,7 @@ button, input, select, textarea {
   padding-bottom: 120px;
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.6) 100%), 
-              url('assets/hero_munakata.webp') no-repeat center 88%/cover;
+              url('assets/hero_cityscape.webp') no-repeat center 55%/cover;
   min-height: 80vh;
   display: flex;
   align-items: center;
@@ -1604,7 +1604,7 @@ textarea.form-control {
   /* ヒーロー背景をスマホ向けの軽量画像に差し替え（表示速度対策） */
   .hero {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.6) 100%),
-                url('assets/hero_munakata_sp.webp') no-repeat center 80%/cover;
+                url('assets/hero_cityscape_sp.webp') no-repeat center center/cover;
   }
 
   /* スケジュールを初期状態で折りたたむ */
