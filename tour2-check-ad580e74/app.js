@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(accessSelect);
       }
 
-      // Validate Place Status（第2回：定員を超えたときの抽選に使う）
+      // Validate Place Status（第2回：移住先の検討状況・必須）
       const placeStatusSelect = document.getElementById('place_status');
       if (placeStatusSelect && placeStatusSelect.value === '') {
         showError(placeStatusSelect, '移住先の検討状況を選択してください。');
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(placeStatusSelect);
       }
 
-      // Validate Bento Count（第2回も大人の方用のお弁当の数を聞く）
+      // Validate Bento Count（欄があるときだけ。第2回は 2026-11-20 に昼食が調整中となり欄を外した）
       const bentoCountSelect = document.getElementById('bento_count');
       if (bentoCountSelect && bentoCountSelect.value === '') {
         showError(bentoCountSelect, 'お弁当の注文の有無を選択してください。');
@@ -519,6 +519,15 @@ document.addEventListener('DOMContentLoaded', () => {
         isValid = false;
       } else {
         clearError(privacyAgree);
+      }
+
+      // 第2回：参加が決まった方のお名前と世帯人数をハウスメーカー等に知らせることへの同意（欄があるときだけ）
+      const partnerAgree = document.getElementById('partner_agree');
+      if (partnerAgree && !partnerAgree.checked) {
+        showError(partnerAgree, '参加が決まった場合にお名前と世帯人数をハウスメーカー等にお知らせすることへの同意が必要です。');
+        isValid = false;
+      } else if (partnerAgree) {
+        clearError(partnerAgree);
       }
 
       const kidsUnivMediaAgree = document.getElementById('kids_univ_media_agree');
@@ -586,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // --- 第2回の新項目（GAS側の列追加が必要） ---
           residence_city: cityInput ? cityInput.value.trim() : '',
           place_status: placeStatusSelect ? placeStatusSelect.value : '',
+          partner_agree: partnerAgree && partnerAgree.checked ? '同意する' : '',
           considering_area: document.getElementById('considering_area') ? document.getElementById('considering_area').value.trim() : '',
           move_timing: document.getElementById('move_timing') ? document.getElementById('move_timing').value : '',
           access_method: accessSelect ? accessSelect.value : '',
@@ -772,7 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 同意チェックはチェックされた時点でエラーを解除
-    ['lunch_agree', 'course_agree', 'privacy_agree', 'kids_univ_media_agree'].forEach((id) => {
+    ['lunch_agree', 'course_agree', 'privacy_agree', 'partner_agree', 'kids_univ_media_agree'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {
