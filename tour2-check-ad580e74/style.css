@@ -723,6 +723,20 @@ button, input, select, textarea {
   object-fit: cover;
 }
 
+/* 道の駅の行程：外観の下に小さく2枚（直売所の中・鯛） */
+.timeline-img-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+  max-width: calc(260px * 16 / 9); /* 外観の写真（高さ上限 260px の 16:9）と幅をそろえる */
+}
+
+.timeline-img-pair .timeline-img-wrap {
+  aspect-ratio: 4 / 3;
+  max-height: none;
+}
+
 .timeline-img-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
