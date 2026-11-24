@@ -477,10 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError(accessSelect);
       }
 
-      // Validate Place Status（第2回：移住先の検討状況・必須）
+      // Validate Place Status（第2回：今後のお住まいの検討状況・必須）
       const placeStatusSelect = document.getElementById('place_status');
       if (placeStatusSelect && placeStatusSelect.value === '') {
-        showError(placeStatusSelect, '移住先の検討状況を選択してください。');
+        showError(placeStatusSelect, '今後のお住まいの検討状況を選択してください。');
         isValid = false;
       } else if (placeStatusSelect) {
         clearError(placeStatusSelect);

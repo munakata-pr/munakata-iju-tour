@@ -94,7 +94,7 @@
   <meta name="theme-color" content="#3b82f6">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="./style.css?v=preview7">
+  <link rel="stylesheet" href="./style.css?v=preview8">
 
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -448,9 +448,9 @@
             <p class="form-note">※旅行保険の加入手続きに必要なため、番地までご記入ください。</p>
           </div>
 
-          <!-- Place status（移住先の検討状況・必須） -->
+          <!-- Place status（今後のお住まいの検討状況・必須） -->
           <div class="form-group">
-            <label for="place_status" class="form-label">移住先の検討状況<span class="required">必須</span></label>
+            <label for="place_status" class="form-label">今後のお住まいの検討状況<span class="required">必須</span></label>
             <select id="place_status" class="form-control">
               <option value="" disabled selected>選択してください</option>
               <option value="宗像市とほかのまちで迷っている">宗像市とほかのまちで迷っている</option>
@@ -461,14 +461,14 @@
 
           <!-- Considering area -->
           <div class="form-group">
-            <label for="considering_area" class="form-label">移住先として検討中のエリア（任意）</label>
+            <label for="considering_area" class="form-label">お住まいとして検討中のエリア（任意）</label>
             <input type="text" id="considering_area" class="form-control" placeholder="例：宗像市、福津市、福岡市東区など">
             <p class="form-note">※宗像市以外のエリアも書いていただけます。</p>
           </div>
 
           <!-- Move timing -->
           <div class="form-group">
-            <label for="move_timing" class="form-label">移住の時期の目安（任意）</label>
+            <label for="move_timing" class="form-label">お引っ越しの時期の目安（任意）</label>
             <select id="move_timing" class="form-control">
               <option value="" selected>選択してください</option>
               <option value="1年以内">1年以内</option>
@@ -936,7 +936,7 @@
 
           <!-- Inquiry -->
           <div class="form-group">
-            <label for="inquiry" class="form-label">ご質問・ご要望・移住に関するご関心（任意）</label>
+            <label for="inquiry" class="form-label"><span class="phrase">ご質問・ご要望・</span><span class="phrase">宗像の暮らしで気になること（任意）</span></label>
             <textarea id="inquiry" class="form-control" placeholder="ツアーで特に確認したいこと（保育園、買い物、通勤手段、住まい探しなど）があればご記入ください。"></textarea>
           </div>
 
@@ -1190,6 +1190,6 @@
       } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
     })();
   </script>
-  <script src="./app.js?v=preview7"></script>
+  <script src="./app.js?v=preview8"></script>
 </body>
 </html>
