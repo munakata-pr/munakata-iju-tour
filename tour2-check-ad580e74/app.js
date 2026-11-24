@@ -515,20 +515,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!privacyAgree.checked) {
-        showError(privacyAgree, '個人情報の取扱方針および保険の適用への同意が必要です。');
+        showError(privacyAgree, privacyAgree.hasAttribute('data-includes-partner')
+          ? '規約と個人情報保護方針への同意が必要です。'
+          : '個人情報の取扱方針および保険の適用への同意が必要です。');
         isValid = false;
       } else {
         clearError(privacyAgree);
       }
 
-      // 第2回：参加が決まった方のお名前と世帯人数をハウスメーカー等に知らせることへの同意（欄があるときだけ）
-      const partnerAgree = document.getElementById('partner_agree');
-      if (partnerAgree && !partnerAgree.checked) {
-        showError(partnerAgree, '参加が決まった場合にお名前と世帯人数をハウスメーカー等にお知らせすることへの同意が必要です。');
-        isValid = false;
-      } else if (partnerAgree) {
-        clearError(partnerAgree);
-      }
+      // 第2回：参加が決まった方のお名前と世帯人数のハウスメーカー等への共有（規約8）。
+      // 11/24 から別の欄にせず、規約と個人情報保護方針への一括の同意（privacy_agree・data-includes-partner）に含める（市の依頼）。
+      // シートU列・管理者通知への記録は続けるため、一括の同意があれば partner_agree に「同意する」を送る
+      const partnerAgreed = privacyAgree.checked && privacyAgree.hasAttribute('data-includes-partner');
 
       const kidsUnivMediaAgree = document.getElementById('kids_univ_media_agree');
       if (TOUR1_FIELDS && kidsUnivMediaAgree && !kidsUnivMediaAgree.checked) {
@@ -595,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // --- 第2回の新項目（GAS側の列追加が必要） ---
           residence_city: cityInput ? cityInput.value.trim() : '',
           place_status: placeStatusSelect ? placeStatusSelect.value : '',
-          partner_agree: partnerAgree && partnerAgree.checked ? '同意する' : '',
+          partner_agree: partnerAgreed ? '同意する' : '',
           considering_area: document.getElementById('considering_area') ? document.getElementById('considering_area').value.trim() : '',
           move_timing: document.getElementById('move_timing') ? document.getElementById('move_timing').value : '',
           access_method: accessSelect ? accessSelect.value : '',
@@ -782,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 同意チェックはチェックされた時点でエラーを解除
-    ['lunch_agree', 'course_agree', 'privacy_agree', 'partner_agree', 'kids_univ_media_agree'].forEach((id) => {
+    ['lunch_agree', 'course_agree', 'privacy_agree', 'kids_univ_media_agree'].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('change', () => {

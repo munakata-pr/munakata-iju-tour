@@ -94,7 +94,7 @@
   <meta name="theme-color" content="#3b82f6">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="./style.css?v=preview9">
+  <link rel="stylesheet" href="./style.css?v=preview10">
 
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -972,15 +972,9 @@
 
               <div class="checkbox-item">
                 <label class="checkbox-label">
-                  <input type="checkbox" id="privacy_agree" required>
-                  <span>旅行手配および保険適用のための個人情報取扱いに同意します。</span>
-                </label>
-              </div>
-
-              <div class="checkbox-item">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="partner_agree" required>
-                  <span>参加が決まった場合、<strong>お名前と世帯人数</strong>を、今回のツアーにご協力いただく<strong>ハウスメーカー等にお知らせする</strong>こと（規約8）に同意します。</span>
+                  <!-- 11/24 市の依頼：規約8（ハウスメーカー等への共有）だけを別の欄で強調せず、規約と個人情報保護方針への一括の同意にまとめた -->
+                  <input type="checkbox" id="privacy_agree" data-includes-partner required>
+                  <span>上記の規約と、このページ下部の「個人情報保護方針」の内容を確認し、すべてに同意します。</span>
                 </label>
               </div>
 
@@ -1189,6 +1183,6 @@
       } catch (e) { /* UIの補助機能のため、失敗しても本体の動作は継続する */ }
     })();
   </script>
-  <script src="./app.js?v=preview9"></script>
+  <script src="./app.js?v=preview10"></script>
 </body>
 </html>
